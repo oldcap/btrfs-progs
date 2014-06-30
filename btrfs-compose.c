@@ -42,11 +42,15 @@
 #include <ext2fs/ext2fs.h>
 #include <ext2fs/ext2_ext_attr.h>
 
-static int do_compose(const char *filename, int datacsum, int packing,
+static int do_compose(const char *filename, int datacsum,
 		int noxattr)
 {
 	struct btrfs_inode_item btrfs_inode;
 	int fd = open(filename, O_CREAT);
+	int ret;
+	struct btrfs_root *root;
+	struct btrfs_trans_handle *trans;
+	u64 objectid;
 	
 	// 
 
@@ -101,7 +105,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	ret = do_compose(file, datacsum, packing, noxattr);
+	ret = do_compose(file, datacsum, noxattr);
 
 	if (ret)
 		return 1;
