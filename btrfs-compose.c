@@ -98,8 +98,8 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	device = argv[optind-1];
-	file = argv[optind];
+	device = argv[optind];
+	file = argv[optind+1];
 
 	ret = check_mounted(device);
 	if (ret < 0) {
