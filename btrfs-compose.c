@@ -48,14 +48,15 @@ static int do_compose(const char *filename, int datacsum,
 	struct btrfs_inode_item btrfs_inode;
 	int fd = open(filename, O_CREAT, O_SYNC);
 	int ret;
-	struct btrfs_root *root;
-	struct btrfs_trans_handle *trans;
-	u64 objectid;
-	u64 super_bytenr;
+	// struct btrfs_root *root;
+	// struct btrfs_trans_handle *trans;
+	// u64 objectid;
+	// u64 super_bytenr;
 	
-	root = open_ctree_fd(fd, filename, super_bytenr, OPEN_CTREE_WRITES);
+	// root = open_ctree_fd(fd, filename, super_bytenr, OPEN_CTREE_WRITES);
+	// trans = btrfs_start_transaction(root, 1);
 
-	ret = btrfs_insert_inode(trans, root, objectid, &btrfs_inode);
+	// ret = btrfs_insert_inode(trans, root, objectid, &btrfs_inode);
 
 	return ret;
 }
