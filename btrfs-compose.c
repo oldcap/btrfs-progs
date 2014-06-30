@@ -57,7 +57,7 @@ static int do_compose(const char *filename, int datacsum,
 	// trans = btrfs_start_transaction(root, 1);
 
 	// ret = btrfs_insert_inode(trans, root, objectid, &btrfs_inode);
-
+	close(fd);
 	return ret;
 }
 
