@@ -46,7 +46,7 @@ static int do_compose(const char *filename, int datacsum,
 		int noxattr)
 {
 	struct btrfs_inode_item btrfs_inode;
-	int fd = open(filename, O_CREAT);
+	int fd = open(filename, O_CREAT, O_SYNC);
 	int ret;
 	struct btrfs_root *root;
 	struct btrfs_trans_handle *trans;
