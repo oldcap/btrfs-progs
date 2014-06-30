@@ -63,7 +63,7 @@ static int do_compose(const char *filename, int datacsum,
 
 static void print_usage(void)
 {
-	printf("usage: btrfs-compose [-d] [-i] device\n");
+	printf("usage: btrfs-compose [-d] [-i] device file\n");
 	printf("\t-d disable data checksum\n");
 	printf("\t-i ignore xattrs and ACLs\n");
 }
@@ -74,6 +74,7 @@ int main(int argc, char *argv[])
 	int noxattr = 0;
 	int datacsum = 1;
 	char *file;
+	char *device;
 	while(1) {
 		int c = getopt(argc, argv, "dinr");
 		if (c < 0)
@@ -91,13 +92,15 @@ int main(int argc, char *argv[])
 		}
 	}
 	argc = argc - optind;
-	if (argc != 1) {
+	if (argc != 2) {
 		print_usage();
 		return 1;
 	}
 
+	device = argv[optind-1]
 	file = argv[optind];
-	ret = check_mounted(file);
+
+	ret = check_mounted(device);
 	if (ret < 0) {
 		fprintf(stderr, "Could not check mount status: %s\n",
 			strerror(-ret));
