@@ -51,8 +51,9 @@ static int do_compose(const char *filename, int datacsum,
 	struct btrfs_root *root;
 	struct btrfs_trans_handle *trans;
 	u64 objectid;
+	u64 super_bytenr;
 	
-	// 
+	root = open_ctree_fd(fd, filename, super_bytenr, OPEN_CTREE_WRITES);
 
 	ret = btrfs_insert_inode(trans, root, objectid, &btrfs_inode);
 
@@ -61,7 +62,7 @@ static int do_compose(const char *filename, int datacsum,
 
 static void print_usage(void)
 {
-	printf("usage: btrfs-compose [-d] [-i] [-n] [-r] device\n");
+	printf("usage: btrfs-compose [-d] [-i] device\n");
 	printf("\t-d disable data checksum\n");
 	printf("\t-i ignore xattrs and ACLs\n");
 }
