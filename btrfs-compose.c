@@ -45,20 +45,21 @@
 static int do_compose(const char *devname, const char *filename, 
 	int datacsum, int noxattr)
 {
-	struct btrfs_inode_item *inode;
+	
 	fprintf(stdout, "Creating file %s\n", filename);
 	char *harddevname = "/dev/sdb";
 	char *hardfilename = "composed-file";
 
 	int fd = open(filename, O_CREAT, O_SYNC);
 	close(fd);
+
+	struct btrfs_inode_item *inode;
 	int devfd = open(harddevname, O_RDONLY);
 	int ret;
 	struct btrfs_path path;
 	struct btrfs_dir_item *dir;
 	struct btrfs_root *root;
 	u64 root_dir;
-	struct btrfs_dir_item *di;
 	struct extent_buffer *leaf;
 
 	root = open_ctree_fd(devfd, harddevname, 0, OPEN_CTREE_WRITES);	
