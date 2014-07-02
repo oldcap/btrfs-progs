@@ -50,7 +50,7 @@ static int do_compose(const char *devname, const char *filename,
 	char *harddevname = "/dev/sdb";
 	char *hardfilename = "composed-file";
 
-	int fd = open(filename, O_CREAT, O_SYNC);
+	// int fd = open(filename, O_CREAT, O_SYNC);
 
 	struct btrfs_inode_item *inode;
 	int devfd = open(harddevname, O_RDONLY);
@@ -62,32 +62,32 @@ static int do_compose(const char *devname, const char *filename,
 	u64 root_dir;
 	struct extent_buffer *leaf;
 
-	// info = open_ctree_fs_info(harddevname, 0, 0, OPEN_CTREE_PARTIAL);
-	// root = info->fs_root;
-	// btrfs_init_path(&path);
-	// root_dir = btrfs_root_dirid(&root->root_item);
+	info = open_ctree_fs_info(harddevname, 0, 0, OPEN_CTREE_PARTIAL);
+	root = info->fs_root;
+	btrfs_init_path(&path);
+	root_dir = btrfs_root_dirid(&root->root_item);
 
-	char *buf = malloc(1048576);
-	memset(buf, 'z', 1048576);
-	write(fd, buf, 1048576);
-	fsync(fd);
-	close(fd);
+	// char *buf = malloc(1048576);
+	// memset(buf, 'z', 1048576);
+	// write(fd, buf, 1048576);
+	// fsync(fd);
+	// close(fd);
 
-	// if (info != NULL) {
-	// 	fprintf(stdout, "fs ID is %u, last alloc inode %llu\n", info->fsid[0], 
-	// 		root->last_inode_alloc);
-	// }
-	// dir = btrfs_lookup_dir_item(NULL, root, &path,
-	// 	root_dir, hardfilename, strlen(hardfilename), 0);
+	if (info != NULL) {
+		fprintf(stdout, "fs ID is %u, last alloc inode %llu\n", info->fsid[0], 
+			root->last_inode_alloc);
+	}
+	dir = btrfs_lookup_dir_item(NULL, root, &path,
+		root_dir, hardfilename, strlen(hardfilename), 0);
 
-	// if (!dir || IS_ERR(dir)) {
-	// 	fprintf(stderr, "unable to find file %s\n", hardfilename);
-	// 	goto fail;
-	// }
+	if (!dir || IS_ERR(dir)) {
+		fprintf(stderr, "unable to find file %s\n", hardfilename);
+		goto fail;
+	}
 
-	// if (dir != NULL) {
-	// 	fprintf(stdout, "dir type is %u\n", dir->type);
-	// }
+	if (dir != NULL) {
+		fprintf(stdout, "dir type is %u\n", dir->type);
+	}
 
 	// leaf = path.nodes[0];
 	// inode = btrfs_item_ptr(leaf, path.slots[0], struct btrfs_inode_item);
