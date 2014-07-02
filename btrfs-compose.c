@@ -58,8 +58,9 @@ static int do_compose(const char *devname, const char *filename,
 	root = open_ctree_fd(devfd, devname, 0, OPEN_CTREE_WRITES);	
 	btrfs_init_path(&path);
 	root_dir = btrfs_root_dirid(&root->root_item);
+
 	dir = btrfs_lookup_dir_item(NULL, root, &path,
-				   root_dir, name, strlen(name), 0);
+				   root_dir, filename, strlen(filename), 0);
 	
 	// struct btrfs_root *root;
 	// struct btrfs_trans_handle *trans;
@@ -123,7 +124,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	ret = do_compose(file, datacsum, noxattr);
+	ret = do_compose(file, device, datacsum, noxattr);
 
 	if (ret)
 		return 1;
