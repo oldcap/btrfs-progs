@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	ret = do_compose(file, device, datacsum, noxattr);
+	ret = do_compose(device, file, datacsum, noxattr);
 
 	if (ret)
 		return 1;
