@@ -47,6 +47,7 @@ static int do_compose(const char *devicename, const char *filename,
 {
 	// struct btrfs_inode_item btrfs_inode;
 	fprintf(stdout, "Creating file %s\n", filename);
+	char *devname = "/dev/sdb";
 	int fd = open(filename, O_CREAT, O_SYNC);
 	int devfd = open(devname, O_RDONLY);
 	int ret;
@@ -54,7 +55,6 @@ static int do_compose(const char *devicename, const char *filename,
 	struct btrfs_dir_item *dir;
 	struct btrfs_root *root;
 	u64 root_dir;
-	char *devname = "/dev/sdb";
 
 	root = open_ctree_fd(devfd, devname, 0, OPEN_CTREE_WRITES);	
 	btrfs_init_path(&path);
