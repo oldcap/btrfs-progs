@@ -74,6 +74,8 @@ static int do_compose(const char *devname, const char *filename,
 		goto fail;
 	}
 
+	fprintf(stdout, "%llu\n", dir->location->objectid);
+
 	leaf = path.nodes[0];
 	inode = btrfs_item_ptr(leaf, path.slots[0], struct btrfs_inode_item);
 
@@ -81,7 +83,7 @@ static int do_compose(const char *devname, const char *filename,
 		fprintf(stderr, "unable to obtain inode for %s\n", hardfilename);
 		goto fail;
 	}
-	fprintf(stdout, "%llu\n", inode->generation);
+	// fprintf(stdout, "%llu\n", inode->generation);
 	// btrfs_set_stack_inode_size(inode, 8192);
 	// struct btrfs_root *root;
 	// struct btrfs_trans_handle *trans;
