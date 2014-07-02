@@ -74,7 +74,7 @@ static int do_compose(const char *devname, const char *filename,
 		goto fail;
 	}
 
-	fprintf(stdout, "%llu\n", dir->location->objectid);
+	fprintf(stdout, "%llu\n", dir->location.objectid);
 
 	leaf = path.nodes[0];
 	inode = btrfs_item_ptr(leaf, path.slots[0], struct btrfs_inode_item);
