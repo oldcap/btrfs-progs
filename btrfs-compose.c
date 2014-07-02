@@ -58,19 +58,22 @@ static int do_compose(const char *devname, const char *filename,
 	struct btrfs_dir_item *dir;
 	struct btrfs_root *root;
 	u64 root_dir;
+	struct btrfs_dir_item *di;
 
 	root = open_ctree_fd(devfd, harddevname, 0, OPEN_CTREE_WRITES);	
 	btrfs_init_path(&path);
 	root_dir = btrfs_root_dirid(&root->root_item);
 
 	dir = btrfs_lookup_dir_item(NULL, root, &path,
-				   root_dir, filename, strlen(filename), 0);
+				   root_dir, hardfilename, strlen(hardfilename), 0);
 
 	if (!dir || IS_ERR(dir)) {
-		fprintf(stderr, "unable to find file %s\n", filename);
+		fprintf(stderr, "unable to find file %s\n", hardfilename);
 		goto fail;
 	}
 	
+	di = btrfs_item_ptr(&path.nodes[0]->leaf, path.slots[0],
+		struct btrfs_dir_item);
 	// struct btrfs_root *root;
 	// struct btrfs_trans_handle *trans;
 	// u64 objectid;
