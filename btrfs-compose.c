@@ -59,7 +59,7 @@ static int do_compose(const char *devname, const char *filename,
 	struct btrfs_dir_item *dir;
 	struct btrfs_fs_info *info;
 	struct btrfs_root *root;
-	u64 root_dir;
+	u64 root_dir, total_bytes;
 	struct extent_buffer *leaf;
 	struct btrfs_trans_handle *trans;
 	struct btrfs_key key;
@@ -90,6 +90,19 @@ static int do_compose(const char *devname, const char *filename,
 
 	leaf = path.nodes[0];
 	btrfs_dir_item_key_to_cpu(leaf, dir, &key);
+	btrfs_release_path(&path);
+	objectid = key.objectid;
+
+	ret = btrfs_lookup_inode(NULL, ext2_root, &path, &key, 0);
+	if (ret) {
+		fprintf(stderr, "unable to find inode item\n");
+		goto fail;
+	}
+	leaf = path.nodes[0];
+	inode = btrfs_item_ptr(leaf, path.slots[0], struct btrfs_inode_item);
+	total_bytes = btrfs_inode_size(leaf, inode);
+	btrfs_release_path(&path);
+
 
 	// if (dir != NULL) {
 	// 	fprintf(stdout, "dir type is %u\n", dir->type);
