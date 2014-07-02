@@ -91,9 +91,9 @@ static int do_compose(const char *devname, const char *filename,
 	leaf = path.nodes[0];
 	btrfs_dir_item_key_to_cpu(leaf, dir, &key);
 	btrfs_release_path(&path);
-	objectid = key.objectid;
+	// objectid = key.objectid;
 
-	ret = btrfs_lookup_inode(NULL, ext2_root, &path, &key, 0);
+	ret = btrfs_lookup_inode(NULL, root, &path, &key, 0);
 	if (ret) {
 		fprintf(stderr, "unable to find inode item\n");
 		goto fail;
