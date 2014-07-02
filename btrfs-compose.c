@@ -56,7 +56,7 @@ static int do_compose(const char *devname, const char *filename,
 	int devfd = open(harddevname, O_RDONLY);
 	int ret;
 	struct btrfs_path path;
-	struct btrfs_dir_item *dir;
+	struct btrfs_dir_item *dir = NULL;
 	struct btrfs_root *root, *fsroot;
 	u64 root_dir;
 	struct extent_buffer *leaf;
