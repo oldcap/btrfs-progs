@@ -104,7 +104,7 @@ static int do_compose(const char *devname, const char *filename,
 	fprintf(stdout, "total size %llu\n", total_bytes);
 
 	btrfs_set_inode_generation(leaf, inode, 7);
-	fprintf(stdout, "new generation is %llu\n", btrfs_get_inode_generation(leaf, inode));
+	fprintf(stdout, "new generation is %llu\n", btrfs_inode_generation(leaf, inode));
 	btrfs_commit_transaction(trans, root);
 
 	btrfs_release_path(&path);
