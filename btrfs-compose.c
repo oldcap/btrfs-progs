@@ -57,22 +57,23 @@ static int do_compose(const char *devname, const char *filename,
 	int ret;
 	struct btrfs_path path;
 	struct btrfs_dir_item *dir = NULL;
-	struct btrfs_root *root, *fsroot;
+	struct btrfs_fs_info *info;
+	struct btrfs_root *root;
 	u64 root_dir;
 	struct extent_buffer *leaf;
 
-	root = open_ctree_fd(devfd, harddevname, 0, OPEN_CTREE_WRITES);	
-	fsroot = root->fs_info->fs_root;
+	info = open_ctree_fs_info(devname, 0, 0, OPEN_CTREE_PARTIAL);
+	root = info->fs_root;
 	btrfs_init_path(&path);
-	root_dir = btrfs_root_dirid(&fsroot->root_item);
+	root_dir = btrfs_root_dirid(&root->root_item);
 
 	fsync(fd);
 	close(fd);
 
-	if (root != NULL) {
-		fprintf(stdout, "fs ID is %u\n", root->fs_info->fsid[0]);
+	if (info != NULL) {
+		fprintf(stdout, "fs ID is %u\n", info->fsid[0]);
 	}
-	dir = btrfs_lookup_dir_item(NULL, fsroot, &path,
+	dir = btrfs_lookup_dir_item(NULL, root, &path,
 		root_dir, hardfilename, strlen(hardfilename), 0);
 
 	if (!dir || IS_ERR(dir)) {
