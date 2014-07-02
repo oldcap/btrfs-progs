@@ -80,17 +80,17 @@ static int do_compose(const char *devname, const char *filename,
 		goto fail;
 	}
 
-	if (dir != NULL) {
-		fprintf(stdout, "dir type is %u\n", dir->type);
-	}
+	// if (dir != NULL) {
+	// 	fprintf(stdout, "dir type is %u\n", dir->type);
+	// }
 
-	leaf = path.nodes[0];
-	inode = btrfs_item_ptr(leaf, path.slots[0], struct btrfs_inode_item);
+	// leaf = path.nodes[0];
+	// inode = btrfs_item_ptr(leaf, path.slots[0], struct btrfs_inode_item);
 
-	if (inode == NULL) {
-		fprintf(stderr, "unable to obtain inode for %s\n", hardfilename);
-		goto fail;
-	}
+	// if (inode == NULL) {
+	// 	fprintf(stderr, "unable to obtain inode for %s\n", hardfilename);
+	// 	goto fail;
+	// }
 	// fprintf(stdout, "%llu\n", inode->generation);
 	// btrfs_set_stack_inode_size(inode, 8192);
 	// struct btrfs_root *root;
