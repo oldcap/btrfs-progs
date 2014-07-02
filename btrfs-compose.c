@@ -63,7 +63,7 @@ static int do_compose(const char *devname, const char *filename,
 				   root_dir, filename, strlen(filename), 0);
 
 	if (!dir || IS_ERR(dir)) {
-		fprintf(stderr, "unable to find file %s\n", name);
+		fprintf(stderr, "unable to find file %s\n", filename);
 		goto fail;
 	}
 	
