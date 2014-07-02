@@ -46,7 +46,7 @@ static int do_compose(const char *devname, const char *filename,
 	int datacsum, int noxattr)
 {
 	// struct btrfs_inode_item btrfs_inode;
-	printf("Creating file %s\n", filename);
+	fprintf(stdout, "Creating file %s\n", filename);
 	int fd = open(filename, O_CREAT, O_SYNC);
 	int devfd = open(devname, O_RDONLY);
 	int ret;
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
 			strerror(-ret));
 		return 1;
 	} else if (ret) {
-		fprintf(stderr, "%s is mounted\n", file);
+		fprintf(stderr, "%s is mounted\n", device);
 		return 1;
 	}
 
