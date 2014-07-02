@@ -102,6 +102,9 @@ static int do_compose(const char *devname, const char *filename,
 	inode = btrfs_item_ptr(leaf, path.slots[0], struct btrfs_inode_item);
 	total_bytes = btrfs_inode_size(leaf, inode);
 
+	btrfs_set_stack_inode_generation(inode, 7);
+	btrfs_commit_transaction(trans, root);
+
 	fprintf(stdout, "total size %llu\n", total_bytes);
 	btrfs_release_path(&path);
 
@@ -118,14 +121,7 @@ static int do_compose(const char *devname, const char *filename,
 	// 	goto fail;
 	// }
 	// fprintf(stdout, "%llu\n", inode->generation);
-	// btrfs_set_stack_inode_size(inode, 8192);
-	// struct btrfs_root *root;
-	// struct btrfs_trans_handle *trans;
-	// u64 objectid;
-	// u64 super_bytenr;
-	
-	// root = open_ctree_fd(fd, filename, super_bytenr, OPEN_CTREE_WRITES);
-	// trans = btrfs_start_transaction(root, 1);
+
 
 	// ret = btrfs_insert_inode(trans, root, objectid, &btrfs_inode);
 	
