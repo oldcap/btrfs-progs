@@ -49,8 +49,9 @@ static int do_compose(const char *devname, const char *filename,
 	fprintf(stdout, "Creating file %s\n", filename);
 	char *harddevname = "/dev/sdb";
 	char *hardfilename = "composed-file";
-	
+
 	int fd = open(filename, O_CREAT, O_SYNC);
+	close(fd);
 	int devfd = open(harddevname, O_RDONLY);
 	int ret;
 	struct btrfs_path path;
@@ -79,7 +80,7 @@ static int do_compose(const char *devname, const char *filename,
 	// trans = btrfs_start_transaction(root, 1);
 
 	// ret = btrfs_insert_inode(trans, root, objectid, &btrfs_inode);
-	close(fd);
+	
 	return ret;
 
 fail:
