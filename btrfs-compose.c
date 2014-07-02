@@ -38,9 +38,6 @@
 #include "transaction.h"
 #include "crc32c.h"
 #include "utils.h"
-#include "kerncompat.h"
-#include "radix-tree.h"
-#include "hash.h"
 #include <ext2fs/ext2_fs.h>
 #include <ext2fs/ext2fs.h>
 #include <ext2fs/ext2_ext_attr.h>
@@ -48,7 +45,7 @@
 static int do_compose(const char *devname, const char *filename, 
 	int datacsum, int noxattr)
 {
-	// struct btrfs_inode_item btrfs_inode;
+	struct btrfs_inode_item *inode;
 	fprintf(stdout, "Creating file %s\n", filename);
 	char *harddevname = "/dev/sdb";
 	char *hardfilename = "composed-file";
@@ -62,6 +59,7 @@ static int do_compose(const char *devname, const char *filename,
 	struct btrfs_root *root;
 	u64 root_dir;
 	struct btrfs_dir_item *di;
+	struct extent_buffer *leaf;
 
 	root = open_ctree_fd(devfd, harddevname, 0, OPEN_CTREE_WRITES);	
 	btrfs_init_path(&path);
@@ -74,9 +72,9 @@ static int do_compose(const char *devname, const char *filename,
 		fprintf(stderr, "unable to find file %s\n", hardfilename);
 		goto fail;
 	}
-	
-	di = btrfs_item_ptr(&path.nodes[0]->leaf, path.slots[0],
-		struct btrfs_dir_item);
+
+	leaf = path.nodes[0];
+	inode = btrfs_item_ptr(leaf, path.slots[0], struct btrfs_inode_item);
 	// struct btrfs_root *root;
 	// struct btrfs_trans_handle *trans;
 	// u64 objectid;
