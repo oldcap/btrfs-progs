@@ -51,7 +51,6 @@ static int do_compose(const char *devname, const char *filename,
 	char *hardfilename = "composed-file";
 
 	int fd = open(filename, O_CREAT, O_SYNC);
-	close(fd);
 
 	struct btrfs_inode_item *inode;
 	int devfd = open(harddevname, O_RDONLY);
@@ -66,8 +65,11 @@ static int do_compose(const char *devname, const char *filename,
 	btrfs_init_path(&path);
 	root_dir = btrfs_root_dirid(&root->root_item);
 
+	fsync(fd);
+	close(fd);
+
 	dir = btrfs_lookup_dir_item(NULL, root, &path,
-				   root_dir, filename, strlen(filename), 0);
+				   root_dir, hardfilename, strlen(hardfilename), 0);
 
 	if (!dir || IS_ERR(dir)) {
 		fprintf(stderr, "unable to find file %s\n", filename);
