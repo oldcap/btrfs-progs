@@ -101,6 +101,8 @@ static int do_compose(const char *devname, const char *filename,
 	leaf = path.nodes[0];
 	inode = btrfs_item_ptr(leaf, path.slots[0], struct btrfs_inode_item);
 	total_bytes = btrfs_inode_size(leaf, inode);
+
+	fprintf(stdout, "total size %llu\n", total_bytes);
 	btrfs_release_path(&path);
 
 
