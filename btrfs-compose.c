@@ -61,6 +61,11 @@ static int do_compose(const char *devname, const char *filename,
 
 	dir = btrfs_lookup_dir_item(NULL, root, &path,
 				   root_dir, filename, strlen(filename), 0);
+
+	if (!dir || IS_ERR(dir)) {
+		fprintf(stderr, "unable to find file %s\n", name);
+		goto fail;
+	}
 	
 	// struct btrfs_root *root;
 	// struct btrfs_trans_handle *trans;
