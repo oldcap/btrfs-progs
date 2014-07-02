@@ -78,6 +78,9 @@ static int do_compose(const char *devname, const char *filename,
 	// ret = btrfs_insert_inode(trans, root, objectid, &btrfs_inode);
 	close(fd);
 	return ret;
+
+fail:
+	return -1;
 }
 
 static void print_usage(void)
