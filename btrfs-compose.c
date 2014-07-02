@@ -67,6 +67,9 @@ static int do_compose(const char *devname, const char *filename,
 	btrfs_init_path(&path);
 	root_dir = btrfs_root_dirid(&root->root_item);
 
+	char *buf = malloc(1048576);
+	memset(buf, 'z', 1048576);
+	write(fd, buf, 1048576);
 	fsync(fd);
 	close(fd);
 
