@@ -56,7 +56,7 @@ static int do_compose(const char *devname, const char *filename,
 	int devfd = open(harddevname, O_RDONLY);
 	int ret;
 	struct btrfs_path path;
-	struct btrfs_dir_item *dir = NULL;
+	struct btrfs_dir_item *dir;
 	struct btrfs_fs_info *info;
 	struct btrfs_root *root;
 	u64 root_dir;
@@ -87,9 +87,9 @@ static int do_compose(const char *devname, const char *filename,
 		goto fail;
 	}
 
-	if (dir != NULL) {
-		fprintf(stdout, "dir type is %u\n", dir->type);
-	}
+	// if (dir != NULL) {
+	// 	fprintf(stdout, "dir type is %u\n", dir->type);
+	// }
 
 	// leaf = path.nodes[0];
 	// inode = btrfs_item_ptr(leaf, path.slots[0], struct btrfs_inode_item);
