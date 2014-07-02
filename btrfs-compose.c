@@ -61,11 +61,13 @@ static int do_compose(const char *devname, const char *filename,
 	struct btrfs_root *root;
 	u64 root_dir;
 	struct extent_buffer *leaf;
+	struct btrfs_trans_handle *trans;
 
 	info = open_ctree_fs_info(harddevname, 0, 0, OPEN_CTREE_PARTIAL);
 	root = info->fs_root;
 	btrfs_init_path(&path);
 	root_dir = btrfs_root_dirid(&root->root_item);
+	trans = btrfs_start_transaction(root, 1);
 
 	// char *buf = malloc(1048576);
 	// memset(buf, 'z', 1048576);
@@ -77,7 +79,7 @@ static int do_compose(const char *devname, const char *filename,
 		fprintf(stdout, "fs ID is %u, last alloc inode %llu\n", info->fsid[0], 
 			root->last_inode_alloc);
 	}
-	dir = btrfs_lookup_dir_item(NULL, root, &path,
+	dir = btrfs_lookup_dir_item(trans, root, &path,
 		root_dir, hardfilename, strlen(hardfilename), 0);
 
 	if (!dir || IS_ERR(dir)) {
