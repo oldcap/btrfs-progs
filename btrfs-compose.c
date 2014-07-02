@@ -42,29 +42,31 @@
 #include <ext2fs/ext2fs.h>
 #include <ext2fs/ext2_ext_attr.h>
 
-static int do_compose(const char *devicename, const char *filename, 
+static int do_compose(const char *devname, const char *filename, 
 	int datacsum, int noxattr)
 {
 	// struct btrfs_inode_item btrfs_inode;
 	fprintf(stdout, "Creating file %s\n", filename);
-	char *devname = "/dev/sdb";
+	char *harddevname = "/dev/sdb";
+	char *hardfilename = "composed-file";
+	char
 	int fd = open(filename, O_CREAT, O_SYNC);
-	int devfd = open(devname, O_RDONLY);
+	int devfd = open(harddevname, O_RDONLY);
 	int ret;
 	struct btrfs_path path;
 	struct btrfs_dir_item *dir;
 	struct btrfs_root *root;
 	u64 root_dir;
 
-	root = open_ctree_fd(devfd, devname, 0, OPEN_CTREE_WRITES);	
+	root = open_ctree_fd(devfd, harddevname, 0, OPEN_CTREE_WRITES);	
 	btrfs_init_path(&path);
 	root_dir = btrfs_root_dirid(&root->root_item);
 
 	dir = btrfs_lookup_dir_item(NULL, root, &path,
-				   root_dir, filename, strlen(filename), 0);
+				   root_dir, hardfilename, strlen(hardfilename), 0);
 
 	if (!dir || IS_ERR(dir)) {
-		fprintf(stderr, "unable to find file %s\n", filename);
+		fprintf(stderr, "unable to find file %s\n", hardfilename);
 		goto fail;
 	}
 	
