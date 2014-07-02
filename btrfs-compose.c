@@ -42,7 +42,7 @@
 #include <ext2fs/ext2fs.h>
 #include <ext2fs/ext2_ext_attr.h>
 
-static int do_compose(const char *devname, const char *filename, 
+static int do_compose(const char *devicename, const char *filename, 
 	int datacsum, int noxattr)
 {
 	// struct btrfs_inode_item btrfs_inode;
@@ -54,6 +54,7 @@ static int do_compose(const char *devname, const char *filename,
 	struct btrfs_dir_item *dir;
 	struct btrfs_root *root;
 	u64 root_dir;
+	char *devname = "/dev/sdb";
 
 	root = open_ctree_fd(devfd, devname, 0, OPEN_CTREE_WRITES);	
 	btrfs_init_path(&path);
