@@ -76,6 +76,7 @@ static int do_compose(const char *devname, const char *filename,
 
 	leaf = path.nodes[0];
 	inode = btrfs_item_ptr(leaf, path.slots[0], struct btrfs_inode_item);
+	btrfs_set_stack_inode_size(inode, 8192);
 	// struct btrfs_root *root;
 	// struct btrfs_trans_handle *trans;
 	// u64 objectid;
