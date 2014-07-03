@@ -3539,7 +3539,6 @@ int btrfs_record_file_extent(struct btrfs_trans_handle *trans,
 	btrfs_set_file_extent_compression(leaf, fi, 0);
 	btrfs_set_file_extent_encryption(leaf, fi, 0);
 	btrfs_set_file_extent_other_encoding(leaf, fi, 0);
-	fprintf(stdout, "after setting extent attributes\n");
 	btrfs_mark_buffer_dirty(leaf);
 
 	nbytes = btrfs_stack_inode_nbytes(inode) + num_bytes;
@@ -3553,6 +3552,7 @@ int btrfs_record_file_extent(struct btrfs_trans_handle *trans,
 
 	ret = btrfs_insert_empty_item(trans, extent_root, &path,
 				      &ins_key, sizeof(*ei));
+	fprintf(stdout, "after inserting empty item\n");
 	if (ret == 0) {
 		leaf = path.nodes[0];
 		ei = btrfs_item_ptr(leaf, path.slots[0],
