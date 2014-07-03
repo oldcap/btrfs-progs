@@ -58,7 +58,8 @@ static int do_compose(const char *devname, const char *filename,
 	struct btrfs_path path;
 	struct btrfs_dir_item *dir;
 	// struct btrfs_fs_info *info;
-	struct btrfs_root *root, *fsroot;
+	struct btrfs_root *root;
+	// struct btrfs_root *fsroot;
 	u64 root_dir, total_bytes, size;
 	struct extent_buffer *leaf;
 	struct btrfs_trans_handle *trans;
@@ -71,9 +72,9 @@ static int do_compose(const char *devname, const char *filename,
 
 	// info = open_ctree_fs_info(harddevname, 0, 0, OPEN_CTREE_WRITES);
 	root = open_ctree_fd(devfd, harddevname, 0, OPEN_CTREE_WRITES);
-	fsroot = root->fs_info->fs_root;
+	// fsroot = root->fs_info->fs_root;
 	btrfs_init_path(&path);
-	root_dir = btrfs_root_dirid(&fsroot->root_item);
+	root_dir = btrfs_root_dirid(&root->root_item);
 	trans = btrfs_start_transaction(root, 1);
 	if (!trans) {
 		return -ENOMEM;
@@ -87,7 +88,7 @@ static int do_compose(const char *devname, const char *filename,
 
 	if (root != NULL) {
 		fprintf(stdout, "fs ID is %u, last alloc inode %llu\n", root->fs_info->fsid[0], 
-			fsroot->last_inode_alloc);
+			root->fs_info->fs_root->last_inode_alloc);
 	}
 	dir = btrfs_lookup_dir_item(trans, root, &path,
 		root_dir, hardfilename, strlen(hardfilename), 0);
@@ -102,7 +103,7 @@ static int do_compose(const char *devname, const char *filename,
 	btrfs_release_path(&path);
 	// objectid = key.objectid;
 
-	ret = btrfs_lookup_inode(NULL, fsroot, &path, &key, 0);
+	ret = btrfs_lookup_inode(NULL, root, &path, &key, 0);
 	if (ret) {
 		fprintf(stderr, "unable to find inode item\n");
 		goto fail;
