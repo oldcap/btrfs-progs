@@ -64,7 +64,7 @@ static int do_compose(const char *devname, const char *filename,
 	struct btrfs_trans_handle *trans;
 	struct btrfs_key key;
 
-	info = open_ctree_fs_info(harddevname, 0, 0, OPEN_CTREE_PARTIAL);
+	info = open_ctree_fs_info(harddevname, 0, 0, OPEN_CTREE_WRITES);
 	root = info->fs_root;
 	btrfs_init_path(&path);
 	root_dir = btrfs_root_dirid(&root->root_item);
