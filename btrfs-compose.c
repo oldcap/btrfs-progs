@@ -59,7 +59,7 @@ static int do_compose(const char *devname, const char *filename,
 	struct btrfs_dir_item *dir;
 	struct btrfs_fs_info *info;
 	struct btrfs_root *root;
-	u64 root_dir, total_bytes;
+	u64 root_dir, total_bytes, size;
 	struct extent_buffer *leaf;
 	struct btrfs_trans_handle *trans;
 	struct btrfs_key key;
@@ -103,18 +103,21 @@ static int do_compose(const char *devname, const char *filename,
 	}
 	leaf = path.nodes[0];
 	inode = btrfs_item_ptr(leaf, path.slots[0], struct btrfs_inode_item);
-	total_bytes = btrfs_inode_size(leaf, inode);
-	fprintf(stdout, "old total size %llu\n", total_bytes);
+	total_bytes = btrfs_inode_nbytes(leaf, inode);
+	size = btrfs_inode_size(leaf, inode);
+	fprintf(stdout, "old total bytes %llu, size is %llu\n", total_bytes, size);
 	fprintf(stdout, "old generation is %llu\n", btrfs_inode_generation(leaf, inode));
 	btrfs_set_inode_generation(leaf, inode, 7);
 	// btrfs_set_inode_nbytes(leaf, inode, total_bytes + 1048576);
 	fprintf(stdout, "new generation is %llu\n", btrfs_inode_generation(leaf, inode));
 	// fprintf(stdout, "objectid is %llu\n", key.objectid);
-	ret = btrfs_record_file_extent(trans, root, key.objectid, inode, total_bytes,
-					key.objectid, 1048576);
-	// btrfs_set_inode_size(leaf, inode, total_bytes + 1048576);
-	// total_bytes = btrfs_inode_size(leaf, inode);
-	// fprintf(stdout, "new total size %llu\n", total_bytes);	
+	// ret = btrfs_record_file_extent(trans, root, key.objectid, inode, total_bytes,
+	// 				key.objectid, 1048576);
+	btrfs_set_inode_nbytes(leaf, inode, total_bytes + 1048576);
+	btrfs_set_inode_size(leaf, inode, size + 1048576);
+	total_bytes = btrfs_inode_nbytes(leaf, inode);
+	size = btrfs_inode_size(leaf, inode);
+	fprintf(stdout, "new total size %llu, size is %llu\n", total_bytes, size);
 	btrfs_mark_buffer_dirty(leaf);
 	btrfs_release_path(&path);
 	ret = btrfs_commit_transaction(trans, root);
