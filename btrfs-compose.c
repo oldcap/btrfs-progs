@@ -53,7 +53,7 @@ static int do_compose(const char *devname, const char *filename,
 	// int fd = open(filename, O_CREAT, O_SYNC);
 
 	struct btrfs_inode_item *inode;
-	int devfd = open(harddevname, O_RDONLY);
+	int devfd = open(harddevname, O_RDWR);
 	int ret;
 	struct btrfs_path path;
 	struct btrfs_dir_item *dir;
