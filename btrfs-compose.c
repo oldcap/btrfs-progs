@@ -92,7 +92,7 @@ static int do_compose(const char *devname, const char *filename,
 	}
 	dir = btrfs_lookup_dir_item(trans, root, &path,
 		root_dir, hardfilename, strlen(hardfilename), 1);
-	fprintf(stdout, "found inode\n");
+	
 	if (dir == NULL || IS_ERR(dir)) {
 		fprintf(stderr, "unable to find file %s\n", hardfilename);
 		goto fail;
@@ -101,6 +101,7 @@ static int do_compose(const char *devname, const char *filename,
 	leaf = path.nodes[0];
 	btrfs_dir_item_key_to_cpu(leaf, dir, &key);
 	// objectid = key.objectid;
+	fprintf(stdout, "found key %llu\n", key.objectid);
 
 	ret = btrfs_lookup_inode(trans, root, &path, &key, 1);
 	if (ret) {
