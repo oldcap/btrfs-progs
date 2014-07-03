@@ -48,13 +48,14 @@ static int do_compose(const char *devname, const char *filename,
 	
 	fprintf(stdout, "Creating file %s\n", filename);
 	char *harddevname = "/dev/sdb";
-	char *hardfilename = "composed-file";
+	// char *hardfilename = "composed-file";
+	char *hardfilename = "auth.log";
 
 	// int fd = open(filename, O_CREAT, O_SYNC);
 
 	struct btrfs_inode_item *inode;
 	int devfd = open(harddevname, O_RDWR);
-	int ret;
+	int ret = 0;
 	struct btrfs_path path;
 	struct btrfs_dir_item *dir;
 	// struct btrfs_fs_info *info;
@@ -117,16 +118,18 @@ static int do_compose(const char *devname, const char *filename,
 	size = btrfs_inode_size(leaf, inode);
 	fprintf(stdout, "old total bytes %llu, size is %llu\n", total_bytes, size);
 	fprintf(stdout, "old generation is %llu\n", btrfs_inode_generation(leaf, inode));
+
+	return ret;
+	
 	trans = btrfs_start_transaction(root, 1);
 	if (!trans) {
 		return -ENOMEM;
 	}
 	btrfs_set_inode_generation(leaf, inode, 7);
-	// btrfs_set_inode_nbytes(leaf, inode, total_bytes + 1048576);
 	fprintf(stdout, "new generation is %llu\n", btrfs_inode_generation(leaf, inode));
 	fprintf(stdout, "objectid is %llu\n", key.objectid);
-	// ret = btrfs_record_file_extent(trans, root, key.objectid, inode, total_bytes,
-	// 				key.objectid, 1048576);
+	ret = btrfs_record_file_extent(trans, root, key.objectid, inode, total_bytes,
+					key.objectid, 1048576);
 	btrfs_set_inode_nbytes(leaf, inode, total_bytes + 1048576);
 	btrfs_set_inode_size(leaf, inode, size + 1048576);
 	total_bytes = btrfs_inode_nbytes(leaf, inode);
