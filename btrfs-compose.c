@@ -53,7 +53,7 @@ static int do_compose(const char *devname, const char *filename,
 	// int fd = open(filename, O_CREAT, O_SYNC);
 
 	struct btrfs_inode_item *inode;
-	// int devfd = open(harddevname, O_RDWR);
+	int devfd = open(harddevname, O_RDWR);
 	int ret;
 	struct btrfs_path path;
 	struct btrfs_dir_item *dir;
@@ -65,7 +65,7 @@ static int do_compose(const char *devname, const char *filename,
 	struct btrfs_key key;
 
 	// info = open_ctree_fs_info(harddevname, 0, 0, OPEN_CTREE_WRITES);
-	root = open_ctree_fd(fd, harddevname, 0, OPEN_CTREE_WRITES);
+	root = open_ctree_fd(devfd, harddevname, 0, OPEN_CTREE_WRITES);
 	fsroot = root->fs_info->fs_root;
 	btrfs_init_path(&path);
 	root_dir = btrfs_root_dirid(&fsroot->root_item);
