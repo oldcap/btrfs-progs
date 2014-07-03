@@ -81,7 +81,7 @@ static int do_compose(const char *devname, const char *filename,
 	// close(fd);
 
 	if (root != NULL) {
-		fprintf(stdout, "fs ID is %u, last alloc inode %llu\n", info->fsid[0], 
+		fprintf(stdout, "fs ID is %u, last alloc inode %llu\n", root->fs_info->fsid[0], 
 			fsroot->last_inode_alloc);
 	}
 	dir = btrfs_lookup_dir_item(trans, fsroot, &path,
