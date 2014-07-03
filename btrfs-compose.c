@@ -112,9 +112,9 @@ static int do_compose(const char *devname, const char *filename,
 	// fprintf(stdout, "objectid is %llu\n", key.objectid);
 	ret = btrfs_record_file_extent(trans, root, key.objectid, inode, total_bytes,
 					key.objectid, 1048576);
-	btrfs_set_inode_size(leaf, inode, total_bytes + 1048576);
-	total_bytes = btrfs_inode_size(leaf, inode);
-	fprintf(stdout, "new total size %llu\n", total_bytes);	
+	// btrfs_set_inode_size(leaf, inode, total_bytes + 1048576);
+	// total_bytes = btrfs_inode_size(leaf, inode);
+	// fprintf(stdout, "new total size %llu\n", total_bytes);	
 	btrfs_mark_buffer_dirty(leaf);
 	btrfs_release_path(&path);
 	ret = btrfs_commit_transaction(trans, root);
