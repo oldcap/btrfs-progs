@@ -65,6 +65,8 @@ static int do_compose(const char *devname, const char *filename,
 	struct extent_buffer *leaf;
 	struct btrfs_trans_handle *trans;
 	struct btrfs_key key;
+	struct btrfs_file_extent_item *fi;
+	u64 offset;
 
 	if (devfd < 0) {
 		fprintf(stderr, "unable to open %s\n", devname);
@@ -133,7 +135,7 @@ static int do_compose(const char *devname, const char *filename,
 	btrfs_item_key_to_cpu(leaf, &key, path.slots[0]);
 	fi = btrfs_item_ptr(leaf, path.slots[0],
 			    struct btrfs_file_extent_item);
-	u64 offset = btrfs_file_extent_offset(leaf, fi);
+	offset = btrfs_file_extent_offset(leaf, fi);
 
 	return ret;
 
