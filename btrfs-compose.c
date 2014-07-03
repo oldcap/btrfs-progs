@@ -64,12 +64,17 @@ static int do_compose(const char *devname, const char *filename,
 	struct btrfs_trans_handle *trans;
 	struct btrfs_key key;
 
+	if (devfd < 0) {
+		fprintf(stderr, "unable to open %s\n", devname);
+		goto fail;
+	}
+
 	// info = open_ctree_fs_info(harddevname, 0, 0, OPEN_CTREE_WRITES);
 	root = open_ctree_fd(devfd, harddevname, 0, OPEN_CTREE_WRITES);
 	fsroot = root->fs_info->fs_root;
 	btrfs_init_path(&path);
 	root_dir = btrfs_root_dirid(&fsroot->root_item);
-	trans = btrfs_start_transaction(fsroot, 1);
+	trans = btrfs_start_transaction(root, 1);
 	if (!trans) {
 		return -ENOMEM;
 	}
@@ -121,7 +126,7 @@ static int do_compose(const char *devname, const char *filename,
 	fprintf(stdout, "new total size %llu, size is %llu\n", total_bytes, size);
 	btrfs_mark_buffer_dirty(leaf);
 	btrfs_release_path(&path);
-	ret = btrfs_commit_transaction(trans, fsroot);
+	ret = btrfs_commit_transaction(trans, root);
 	BUG_ON(ret);
 	ret = close_ctree(root);
 	BUG_ON(ret);
