@@ -119,8 +119,24 @@ static int do_compose(const char *devname, const char *filename,
 	fprintf(stdout, "old total bytes %llu, size is %llu\n", total_bytes, size);
 	fprintf(stdout, "old generation is %llu\n", btrfs_inode_generation(leaf, inode));
 
+	key.objectid = objectid;
+	key.offset = 0;
+	btrfs_set_key_type(&key, BTRFS_EXTENT_DATA_KEY);
+	ret = btrfs_search_slot(NULL, root, &key, &path, 0, 0);
+
+	if (ret != 0) {
+		fprintf(stderr, "unable to find first file extent\n");
+		btrfs_release_path(&path);
+	}
+
+	leaf = path.nodes[0];
+	btrfs_item_key_to_cpu(leaf, &key, path.slots[0]);
+	fi = btrfs_item_ptr(leaf, path.slots[0],
+			    struct btrfs_file_extent_item);
+	u64 offset = btrfs_file_extent_offset(leaf, fi);
+
 	return ret;
-	
+
 	trans = btrfs_start_transaction(root, 1);
 	if (!trans) {
 		return -ENOMEM;
