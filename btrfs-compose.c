@@ -69,6 +69,9 @@ static int do_compose(const char *devname, const char *filename,
 	btrfs_init_path(&path);
 	root_dir = btrfs_root_dirid(&root->root_item);
 	trans = btrfs_start_transaction(root, 1);
+	if (!trans) {
+		return -ENOMEM;
+	}
 
 	// char *buf = malloc(1048576);
 	// memset(buf, 'z', 1048576);
@@ -103,7 +106,7 @@ static int do_compose(const char *devname, const char *filename,
 	total_bytes = btrfs_inode_size(leaf, inode);
 	fprintf(stdout, "old total size %llu\n", total_bytes);
 	fprintf(stdout, "old generation is %llu\n", btrfs_inode_generation(leaf, inode));
-	btrfs_set_inode_generation(leaf, inode, 7);
+	btrfs_set_stack_inode_generation(inode, 7);
 	btrfs_set_inode_size(leaf, inode, total_bytes + 1048576);
 	btrfs_set_inode_nbytes(leaf, inode, total_bytes + 1048576);
 	fprintf(stdout, "new generation is %llu\n", btrfs_inode_generation(leaf, inode));
