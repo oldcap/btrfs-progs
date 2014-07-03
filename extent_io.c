@@ -693,7 +693,7 @@ out:
 int write_extent_to_disk(struct extent_buffer *eb)
 {
 	int ret;
-	fprintf(stdout, "eb len is %lu\n", eb->len);
+	// fprintf(stdout, "eb len is %lu\n", eb->len);
 	ret = pwrite(eb->fd, eb->data, eb->len, eb->dev_bytenr);
 	if (ret != eb->len) {
 		perror("Failed pwrite");
