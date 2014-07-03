@@ -126,6 +126,8 @@ static int do_compose(const char *devname, const char *filename,
 	ret = close_ctree(root);
 	BUG_ON(ret);
 
+	close(devfd);
+
 	// if (dir != NULL) {
 	// 	fprintf(stdout, "dir type is %u\n", dir->type);
 	// }
