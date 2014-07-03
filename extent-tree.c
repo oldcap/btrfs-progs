@@ -3544,6 +3544,8 @@ int btrfs_record_file_extent(struct btrfs_trans_handle *trans,
 	nbytes = btrfs_stack_inode_nbytes(inode) + num_bytes;
 	btrfs_set_stack_inode_nbytes(inode, nbytes);
 
+	fprintf(stdout, "after btrfs_set_stack_inode_nbytes\n");
+
 	btrfs_release_path(&path);
 
 	ins_key.objectid = disk_bytenr;
@@ -3552,7 +3554,7 @@ int btrfs_record_file_extent(struct btrfs_trans_handle *trans,
 
 	ret = btrfs_insert_empty_item(trans, extent_root, &path,
 				      &ins_key, sizeof(*ei));
-	fprintf(stdout, "after inserting empty item\n");
+
 	if (ret == 0) {
 		leaf = path.nodes[0];
 		ei = btrfs_item_ptr(leaf, path.slots[0],
