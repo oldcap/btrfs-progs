@@ -3530,6 +3530,7 @@ int btrfs_record_file_extent(struct btrfs_trans_handle *trans,
 	fi = btrfs_item_ptr(leaf, path.slots[0],
 			    struct btrfs_file_extent_item);
 	btrfs_set_file_extent_generation(leaf, fi, trans->transid);
+	fprintf(stdout, "after setting extent generation\n");
 	btrfs_set_file_extent_type(leaf, fi, BTRFS_FILE_EXTENT_REG);
 	btrfs_set_file_extent_disk_bytenr(leaf, fi, disk_bytenr);
 	btrfs_set_file_extent_disk_num_bytes(leaf, fi, num_bytes);
