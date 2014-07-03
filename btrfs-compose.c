@@ -135,7 +135,7 @@ static int do_compose(const char *devname, const char *filename,
 	btrfs_item_key_to_cpu(leaf, &key, path.slots[0]);
 	fi = btrfs_item_ptr(leaf, path.slots[0],
 			    struct btrfs_file_extent_item);
-	offset = btrfs_file_extent_num_bytes(leaf, fi);
+	offset = btrfs_file_extent_disk_bytenr(leaf, fi);
 	fprintf(stdout, "first extent offset %llu\n", offset);
 
 	// return ret;
@@ -147,8 +147,8 @@ static int do_compose(const char *devname, const char *filename,
 	btrfs_set_inode_generation(leaf, inode, 7);
 	fprintf(stdout, "new generation is %llu\n", btrfs_inode_generation(leaf, inode));
 	fprintf(stdout, "objectid is %llu\n", key.objectid);
-	ret = btrfs_record_file_extent(trans, root, key.objectid, inode, total_bytes,
-					104857600, 1048576);
+	// ret = btrfs_record_file_extent(trans, root, key.objectid, inode, total_bytes,
+	// 				104857600, 1048576);
 	btrfs_set_inode_nbytes(leaf, inode, total_bytes + 1048576);
 	btrfs_set_inode_size(leaf, inode, size + 1048576);
 	total_bytes = btrfs_inode_nbytes(leaf, inode);
