@@ -123,6 +123,7 @@ static int do_compose(const char *devname, const char *filename,
 	ret = btrfs_commit_transaction(trans, root);
 	BUG_ON(ret);
 	ret = close_ctree(root);
+	BUG_ON(ret);
 
 	// if (dir != NULL) {
 	// 	fprintf(stdout, "dir type is %u\n", dir->type);
