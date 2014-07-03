@@ -100,7 +100,6 @@ static int do_compose(const char *devname, const char *filename,
 
 	leaf = path.nodes[0];
 	btrfs_dir_item_key_to_cpu(leaf, dir, &key);
-	btrfs_release_path(&path);
 	// objectid = key.objectid;
 
 	ret = btrfs_lookup_inode(trans, root, &path, &key, 1);
@@ -118,7 +117,7 @@ static int do_compose(const char *devname, const char *filename,
 	btrfs_set_inode_generation(leaf, inode, 7);
 	// btrfs_set_inode_nbytes(leaf, inode, total_bytes + 1048576);
 	fprintf(stdout, "new generation is %llu\n", btrfs_inode_generation(leaf, inode));
-	// fprintf(stdout, "objectid is %llu\n", key.objectid);
+	fprintf(stdout, "objectid is %llu\n", key.objectid);
 	// ret = btrfs_record_file_extent(trans, root, key.objectid, inode, total_bytes,
 	// 				key.objectid, 1048576);
 	btrfs_set_inode_nbytes(leaf, inode, total_bytes + 1048576);
