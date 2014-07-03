@@ -135,7 +135,7 @@ static int do_compose(const char *devname, const char *filename,
 	btrfs_item_key_to_cpu(leaf, &key, path.slots[0]);
 	fi = btrfs_item_ptr(leaf, path.slots[0],
 			    struct btrfs_file_extent_item);
-	offset = btrfs_file_extent_offset(leaf, fi);
+	offset = btrfs_file_extent_disk_bytenr(leaf, fi);
 	fprintf(stdout, "first extent offset %llu\n", offset);
 
 	return ret;
