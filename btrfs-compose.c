@@ -103,7 +103,7 @@ static int do_compose(const char *devname, const char *filename,
 	}
 	leaf = path.nodes[0];
 	inode = btrfs_item_ptr(leaf, path.slots[0], struct btrfs_inode_item);
-	total_bytes = btrfs_inode_nbytes(leaf, inode);
+	total_bytes = btrfs_stack_inode_nbytes(leaf, inode);
 	size = btrfs_inode_size(leaf, inode);
 	fprintf(stdout, "old total bytes %llu, size is %llu\n", total_bytes, size);
 	fprintf(stdout, "old generation is %llu\n", btrfs_inode_generation(leaf, inode));
