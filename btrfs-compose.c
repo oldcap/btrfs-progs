@@ -128,7 +128,7 @@ static int do_compose(const char *devname, const char *filename,
 	btrfs_insert_inode(trans, root, key.objectid, inode);
 	btrfs_mark_buffer_dirty(leaf);
 	btrfs_release_path(&path);
-	btrfs_free_path(&path);
+	// btrfs_free_path(&path);
 	ret = btrfs_commit_transaction(trans, root);
 	BUG_ON(ret);
 	ret = close_ctree(root);
