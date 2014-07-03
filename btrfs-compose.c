@@ -80,7 +80,7 @@ static int do_compose(const char *devname, const char *filename,
 	// fsync(fd);
 	// close(fd);
 
-	if (info != NULL) {
+	if (root != NULL) {
 		fprintf(stdout, "fs ID is %u, last alloc inode %llu\n", info->fsid[0], 
 			fsroot->last_inode_alloc);
 	}
