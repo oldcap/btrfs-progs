@@ -89,7 +89,7 @@ static int do_compose(const char *devname, const char *filename,
 			root->fs_info->fs_root->last_inode_alloc);
 	}
 	dir = btrfs_lookup_dir_item(NULL, root, &path,
-		root_dir, hardfilename, strlen(hardfilename), 1);
+		root_dir, hardfilename, strlen(hardfilename), 0);
 	
 	if (dir == NULL || IS_ERR(dir)) {
 		fprintf(stderr, "unable to find file %s\n", hardfilename);
