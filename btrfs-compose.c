@@ -74,7 +74,7 @@ static int do_compose(const char *devname, const char *filename,
 	root = open_ctree_fd(devfd, harddevname, 0, OPEN_CTREE_WRITES);
 	// fsroot = root->fs_info->fs_root;
 	btrfs_init_path(&path);
-	root_dir = btrfs_root_dirid(&root->root_item);
+	root_dir = btrfs_root_dirid(&root->fs_info->fs_root->root_item);
 	trans = btrfs_start_transaction(root, 1);
 	if (!trans) {
 		return -ENOMEM;
