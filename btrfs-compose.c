@@ -48,8 +48,8 @@ static int do_compose(const char *devname, const char *filename,
 	
 	fprintf(stdout, "Creating file %s\n", filename);
 	char *harddevname = "/dev/sdb";
-	// char *hardfilename = "composed-file";
-	char *hardfilename = "auth.log";
+	char *hardfilename = "composed-file";
+	// char *hardfilename = "auth.log";
 
 	// int fd = open(filename, O_CREAT, O_SYNC);
 
