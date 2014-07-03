@@ -49,7 +49,7 @@ static int do_compose(const char *devname, const char *filename,
 	fprintf(stdout, "Creating file %s\n", filename);
 	char *harddevname = "/dev/sdb";
 	// char *hardfilename = "vm-image";
-	char *hardfilename = "lastlog";
+	char *hardfilename = "composed-file";
 
 	// int fd = open(filename, O_CREAT, O_SYNC);
 
@@ -138,7 +138,7 @@ static int do_compose(const char *devname, const char *filename,
 	offset = btrfs_file_extent_num_bytes(leaf, fi);
 	fprintf(stdout, "first extent offset %llu\n", offset);
 
-	return ret;
+	// return ret;
 
 	trans = btrfs_start_transaction(root, 1);
 	if (!trans) {
@@ -148,7 +148,7 @@ static int do_compose(const char *devname, const char *filename,
 	fprintf(stdout, "new generation is %llu\n", btrfs_inode_generation(leaf, inode));
 	fprintf(stdout, "objectid is %llu\n", key.objectid);
 	ret = btrfs_record_file_extent(trans, root, key.objectid, inode, total_bytes,
-					key.objectid, 1048576);
+					104857600, 1048576);
 	btrfs_set_inode_nbytes(leaf, inode, total_bytes + 1048576);
 	btrfs_set_inode_size(leaf, inode, size + 1048576);
 	total_bytes = btrfs_inode_nbytes(leaf, inode);
