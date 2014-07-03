@@ -106,7 +106,7 @@ static int do_compose(const char *devname, const char *filename,
 	total_bytes = btrfs_inode_size(leaf, inode);
 	fprintf(stdout, "old total size %llu\n", total_bytes);
 	fprintf(stdout, "old generation is %llu\n", btrfs_inode_generation(leaf, inode));
-	btrfs_set_stack_inode_generation(inode, 7);
+	btrfs_set_inode_generation(leaf, inode, 7);
 	btrfs_set_inode_size(leaf, inode, total_bytes + 1048576);
 	btrfs_set_inode_nbytes(leaf, inode, total_bytes + 1048576);
 	fprintf(stdout, "new generation is %llu\n", btrfs_inode_generation(leaf, inode));
@@ -114,7 +114,7 @@ static int do_compose(const char *devname, const char *filename,
 	fprintf(stdout, "new total size %llu\n", total_bytes);	
 	// ret = btrfs_record_file_extent(trans, root, key.objectid, inode, total_bytes,
 	// 				10485760, 1048576);
-
+	btrfs_mark_buffer_dirty(leaf);
 	ret = btrfs_commit_transaction(trans, root);
 	BUG_ON(ret);
 
