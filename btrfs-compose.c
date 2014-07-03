@@ -108,6 +108,8 @@ static int do_compose(const char *devname, const char *filename,
 
 	btrfs_set_inode_size(leaf, inode, total_bytes + 1048576);
 	btrfs_set_inode_nbytes(leaf, inode, total_bytes + 1048576);
+	total_bytes = btrfs_inode_size(leaf, inode);
+	fprintf(stdout, "new total size %llu\n", total_bytes);	
 	// ret = btrfs_record_file_extent(trans, root, key.objectid, inode, total_bytes,
 	// 				10485760, 1048576);
 
