@@ -199,7 +199,9 @@ int main(int argc, char *argv[])
 
 	ret = do_compose(device, file, datacsum, noxattr);
 
-	if (ret)
+	if (ret) {
+		fprintf(stderr, "compose returned %d\n", ret);
 		return 1;
+	}
 	return 0;
 }
