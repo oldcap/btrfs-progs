@@ -60,7 +60,7 @@ static int do_compose(const char *devname, const char *filename,
 	// struct btrfs_fs_info *info;
 	struct btrfs_root *root;
 	// struct btrfs_root *fsroot;
-	u64 root_dir, total_bytes, size;
+	u64 root_dir, total_bytes, size, objectid;
 	struct extent_buffer *leaf;
 	struct btrfs_trans_handle *trans;
 	struct btrfs_key key;
@@ -100,10 +100,13 @@ static int do_compose(const char *devname, const char *filename,
 
 	leaf = path.nodes[0];
 	btrfs_dir_item_key_to_cpu(leaf, dir, &key);
-	// objectid = key.objectid;
-	fprintf(stdout, "found key %llu\n", key.objectid);
+	btrfs_release_path(&path);
+	objectid = key.objectid;
+	fprintf(stdout, "found dir key %llu\n", key.objectid);
 
 	ret = btrfs_lookup_inode(trans, root, &path, &key, 1);
+	fprintf(stdout, "found inode key %llu\n", key.objectid);
+
 	if (ret) {
 		fprintf(stderr, "unable to find inode item\n");
 		goto fail;
