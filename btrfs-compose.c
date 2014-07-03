@@ -120,7 +120,7 @@ static int do_compose(const char *devname, const char *filename,
 	size = btrfs_inode_size(leaf, inode);
 	fprintf(stdout, "old total bytes %llu, size is %llu\n", total_bytes, size);
 	fprintf(stdout, "old generation is %llu\n", btrfs_inode_generation(leaf, inode));
-
+	btrfs_release_path(&path);
 	key.objectid = objectid;
 	key.offset = 0;
 	btrfs_set_key_type(&key, BTRFS_EXTENT_DATA_KEY);
