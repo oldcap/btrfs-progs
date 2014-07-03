@@ -180,7 +180,7 @@ static int verify_parent_transid(struct extent_io_tree *io_tree,
 	       (unsigned long long)parent_transid,
 	       (unsigned long long)btrfs_header_generation(eb));
 	if (ignore) {
-		eb->flags |= EXTENT_BAD_TRANSID;
+		// eb->flags |= EXTENT_BAD_TRANSID;
 		printk("Ignoring transid failure\n");
 		return 0;
 	}
