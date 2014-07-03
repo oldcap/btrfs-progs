@@ -75,10 +75,8 @@ static int do_compose(const char *devname, const char *filename,
 	// fsroot = root->fs_info->fs_root;
 	btrfs_init_path(&path);
 	root_dir = btrfs_root_dirid(&root->fs_info->fs_root->root_item);
-	trans = btrfs_start_transaction(root, 1);
-	if (!trans) {
-		return -ENOMEM;
-	}
+	
+
 
 	// char *buf = malloc(1048576);
 	// memset(buf, 'z', 1048576);
@@ -90,7 +88,7 @@ static int do_compose(const char *devname, const char *filename,
 		fprintf(stdout, "fs ID is %u, last alloc inode %llu\n", root->fs_info->fsid[0], 
 			root->fs_info->fs_root->last_inode_alloc);
 	}
-	dir = btrfs_lookup_dir_item(trans, root, &path,
+	dir = btrfs_lookup_dir_item(NULL, root, &path,
 		root_dir, hardfilename, strlen(hardfilename), 1);
 	
 	if (dir == NULL || IS_ERR(dir)) {
@@ -104,7 +102,7 @@ static int do_compose(const char *devname, const char *filename,
 	objectid = key.objectid;
 	fprintf(stdout, "found dir key %llu\n", key.objectid);
 
-	ret = btrfs_lookup_inode(trans, root, &path, &key, 1);
+	ret = btrfs_lookup_inode(NULL, root, &path, &key, 0);
 	fprintf(stdout, "found inode key %llu\n", key.objectid);
 
 	if (ret) {
@@ -119,6 +117,10 @@ static int do_compose(const char *devname, const char *filename,
 	size = btrfs_inode_size(leaf, inode);
 	fprintf(stdout, "old total bytes %llu, size is %llu\n", total_bytes, size);
 	fprintf(stdout, "old generation is %llu\n", btrfs_inode_generation(leaf, inode));
+	trans = btrfs_start_transaction(root, 1);
+	if (!trans) {
+		return -ENOMEM;
+	}
 	btrfs_set_inode_generation(leaf, inode, 7);
 	// btrfs_set_inode_nbytes(leaf, inode, total_bytes + 1048576);
 	fprintf(stdout, "new generation is %llu\n", btrfs_inode_generation(leaf, inode));
