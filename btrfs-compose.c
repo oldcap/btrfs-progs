@@ -91,8 +91,8 @@ static int do_compose(const char *devname, const char *filename,
 			root->fs_info->fs_root->last_inode_alloc);
 	}
 	dir = btrfs_lookup_dir_item(trans, root, &path,
-		root_dir, hardfilename, strlen(hardfilename), 0);
-
+		root_dir, hardfilename, strlen(hardfilename), 1);
+	fprintf(stdout, "found inode\n");
 	if (dir == NULL || IS_ERR(dir)) {
 		fprintf(stderr, "unable to find file %s\n", hardfilename);
 		goto fail;
@@ -107,7 +107,7 @@ static int do_compose(const char *devname, const char *filename,
 		fprintf(stderr, "unable to find inode item\n");
 		goto fail;
 	}
-	fprintf(stdout, "found inode\n");
+
 	leaf = path.nodes[0];
 	inode = btrfs_item_ptr(leaf, path.slots[0], struct btrfs_inode_item);
 	total_bytes = btrfs_inode_nbytes(leaf, inode);
