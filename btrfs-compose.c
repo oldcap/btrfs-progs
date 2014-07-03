@@ -101,13 +101,12 @@ static int do_compose(const char *devname, const char *filename,
 	leaf = path.nodes[0];
 	inode = btrfs_item_ptr(leaf, path.slots[0], struct btrfs_inode_item);
 	total_bytes = btrfs_inode_size(leaf, inode);
-	fprintf(stdout, "total size %llu\n", total_bytes);
-
+	fprintf(stdout, "old total size %llu\n", total_bytes);
+	fprintf(stdout, "old generation is %llu\n", btrfs_inode_generation(leaf, inode));
 	btrfs_set_inode_generation(leaf, inode, 7);
-	fprintf(stdout, "new generation is %llu\n", btrfs_inode_generation(leaf, inode));
-
 	btrfs_set_inode_size(leaf, inode, total_bytes + 1048576);
 	btrfs_set_inode_nbytes(leaf, inode, total_bytes + 1048576);
+	fprintf(stdout, "new generation is %llu\n", btrfs_inode_generation(leaf, inode));
 	total_bytes = btrfs_inode_size(leaf, inode);
 	fprintf(stdout, "new total size %llu\n", total_bytes);	
 	// ret = btrfs_record_file_extent(trans, root, key.objectid, inode, total_bytes,
