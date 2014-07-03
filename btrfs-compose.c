@@ -49,7 +49,7 @@ static int do_compose(const char *devname, const char *filename,
 	fprintf(stdout, "Creating file %s\n", filename);
 	char *harddevname = "/dev/sdb";
 	// char *hardfilename = "vm-image";
-	char *hardfilename = "auth.log";
+	char *hardfilename = "lastlog";
 
 	// int fd = open(filename, O_CREAT, O_SYNC);
 
