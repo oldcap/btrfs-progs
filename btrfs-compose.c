@@ -47,7 +47,7 @@ static int do_compose(const char *devname, const char *filename,
 {
 	
 	fprintf(stdout, "Creating file %s\n", filename);
-	char *harddevname = "/dev/sdb";
+	char *harddevname = "/dev/sdd";
 	// char *hardfilename = "vm-image";
 	char *hardfilename = "composed-file";
 
