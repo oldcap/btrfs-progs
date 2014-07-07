@@ -147,7 +147,7 @@ static int do_compose(const char *devname, const char *filename,
 	fprintf(stdout, "Creating file %s\n", filename);
 
 	struct btrfs_inode_item *inode;
-	int devfd = open(devname, O_RDWR);
+	int devfd;
 	int ret = 0;
 	struct btrfs_path path;
 	struct btrfs_dir_item *dir;
@@ -156,9 +156,8 @@ static int do_compose(const char *devname, const char *filename,
 	struct extent_buffer *leaf;
 	struct btrfs_trans_handle *trans;
 	struct btrfs_key key;
-	struct btrfs_file_extent_item *fi;
-	u64 offset;
 
+	devfd = open(devname, O_RDWR | O_SYNC)
 	if (devfd < 0) {
 		fprintf(stderr, "unable to open %s\n", devname);
 		goto fail;
@@ -231,8 +230,6 @@ static int do_compose(const char *devname, const char *filename,
 
 	close(devfd);
 
-
-	
 	return ret;
 
 fail:
