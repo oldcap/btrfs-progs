@@ -96,7 +96,7 @@ int btrfs_record_composed_file_extent(struct btrfs_trans_handle *trans,
 	btrfs_mark_buffer_dirty(leaf);
 
 	nbytes = btrfs_inode_nbytes(leaf, inode) + num_bytes;
-	btrfs_set_inode_nbytes(leaf, linode, nbytes);
+	btrfs_set_inode_nbytes(leaf, inode, nbytes);
 
 	fprintf(stdout, "after btrfs_set_stack_inode_nbytes\n");
 
