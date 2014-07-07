@@ -61,7 +61,7 @@ int btrfs_record_composed_file_extent(struct btrfs_trans_handle *trans,
 	struct btrfs_key ins_key;
 	struct btrfs_path path;
 	struct btrfs_extent_item *ei;
-	u64 nbytes;
+	u64 nbytes, size;
 
 	if (disk_bytenr == 0) {
 	ret = btrfs_insert_file_extent(trans, root, objectid,
@@ -96,7 +96,9 @@ int btrfs_record_composed_file_extent(struct btrfs_trans_handle *trans,
 	btrfs_mark_buffer_dirty(leaf);
 
 	nbytes = btrfs_inode_nbytes(leaf, inode) + num_bytes;
+	size = btrfs_inode_size(leaf, inode) + num_bytes;
 	btrfs_set_inode_nbytes(leaf, inode, nbytes);
+	btrfs_set_inode_size(leaf, inode, size);
 
 	btrfs_release_path(&path);
 
@@ -226,7 +228,9 @@ static int do_compose(const char *devname, const char *filename,
 		fprintf(stderr, "btrfs_commit_transaction returned %d\n", ret);
 	}
 	ret = close_ctree(root);
-	BUG_ON(ret);
+	if (ret) {
+		fprintf(stderr, "error when closing ctree %d\n", ret);
+	}
 
 	close(devfd);
 
