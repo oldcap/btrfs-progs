@@ -136,8 +136,8 @@ static int do_compose(const char *devname, const char *filename,
 	btrfs_set_inode_generation(leaf, inode, 7);
 	fprintf(stdout, "new generation is %llu\n", btrfs_inode_generation(leaf, inode));
 	fprintf(stdout, "objectid is %llu\n", key.objectid);
-	ret = btrfs_insert_file_extent(trans, root, objectid, size, offset+size,
-						1048576, 1048576);
+	ret = btrfs_insert_file_extent(trans, root, objectid, size, 16777216,
+						4096, 4096);
 	btrfs_set_inode_nbytes(leaf, inode, total_bytes + 1048576);
 	btrfs_set_inode_size(leaf, inode, size + 1048576);
 	total_bytes = btrfs_inode_nbytes(leaf, inode);

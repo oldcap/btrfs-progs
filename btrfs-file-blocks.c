@@ -111,17 +111,45 @@ static int do_file_blocks(const char *devname, const char *filename)
 	if (ret != 0) {
 		fprintf(stderr, "unable to find first file extent\n");
 		btrfs_release_path(&path);
+		goto fail;
 	}
 
-	leaf = path.nodes[0];
-	btrfs_item_key_to_cpu(leaf, &key, path.slots[0]);
-	fi = btrfs_item_ptr(leaf, path.slots[0],
-			    struct btrfs_file_extent_item);
-	file_offset = btrfs_file_extent_offset(leaf, fi);
-	disk_addr = btrfs_file_extent_disk_bytenr(leaf, fi);
-	extent_size = btrfs_file_extent_disk_num_bytes(leaf, fi);
-	fprintf(stdout, "extent file offset %llu, disk address %llu, size %llu\n", 
-		file_offset, disk_addr, extent_size);
+	for (file_offset = 0; file_offset < total_bytes; ) {
+		leaf = path.nodes[0];
+		if (path.slots[0] >= btrfs_header_nritems(leaf)) {
+			ret = btrfs_next_leaf(root, &path);
+			if (ret != 0)
+				break;	
+			continue;
+		}
+
+		btrfs_item_key_to_cpu(leaf, &key, path.slots[0]);
+		if (key.objectid != objectid || key.offset != offset ||
+		    btrfs_key_type(&key) != BTRFS_EXTENT_DATA_KEY)
+			break;
+
+		fi = btrfs_item_ptr(leaf, path.slots[0],
+				    struct btrfs_file_extent_item);
+		if (btrfs_file_extent_type(leaf, fi) != BTRFS_FILE_EXTENT_REG)
+			break;
+		if (btrfs_file_extent_compression(leaf, fi) ||
+		    btrfs_file_extent_encryption(leaf, fi) ||
+		    btrfs_file_extent_other_encoding(leaf, fi))
+			break;
+
+		disk_addr = btrfs_file_extent_disk_bytenr(leaf, fi);
+		extent_size = btrfs_file_extent_disk_num_bytes(leaf, fi);
+		/* skip holes and direct mapped extents */
+		if (disk_addr == 0 || disk_addr == offset)
+			goto next_extent;
+
+		fprintf(stdout, "extent file offset %llu, disk address %llu, size %llu\n", 
+			file_offset, disk_addr, extent_size);
+
+next_extent:
+		file_offset += btrfs_file_extent_num_bytes(leaf, fi);
+		path.slots[0]++;
+	}
 
 	return ret;
 
