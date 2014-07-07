@@ -216,8 +216,8 @@ int main(int argc, char *argv[])
 	}
 
 	device = argv[optind];
-	mount_dir = argv[optind+1]
-	file = argv[optind+1];
+	mount_dir = argv[optind+1];
+	file = argv[optind+2];
 
 	ret = check_mounted(mount_dir);
 	if (ret < 0) {
