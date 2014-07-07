@@ -42,60 +42,40 @@
 #include <ext2fs/ext2fs.h>
 #include <ext2fs/ext2_ext_attr.h>
 
-static int do_file_blocks(const char *devname, const char *filename, 
-	int datacsum, int noxattr)
+static int do_file_blocks(const char *devname, const char *filename)
 {
-	
-	fprintf(stdout, "Creating file %s\n", filename);
-	char *harddevname = "/dev/sdd";
-	// char *hardfilename = "vm-image";
-	char *hardfilename = "composed-file";
-
-	// int fd = open(filename, O_CREAT, O_SYNC);
-
-	struct btrfs_inode_item *inode;
-	int devfd = open(harddevname, O_RDWR);
 	int ret = 0;
-	struct btrfs_path path;
-	struct btrfs_dir_item *dir;
-	// struct btrfs_fs_info *info;
+	fprintf(stdout, "Checking blocks for file %s\n", filename);
+	struct btrfs_inode_item *inode;
+	int devfd;
 	struct btrfs_root *root;
-	// struct btrfs_root *fsroot;
-	u64 root_dir, total_bytes, size, objectid;
+	struct btrfs_path path;
+	u64 root_dir, total_bytes, size, objectid;;
 	struct extent_buffer *leaf;
-	struct btrfs_trans_handle *trans;
 	struct btrfs_key key;
 	struct btrfs_file_extent_item *fi;
 	u64 offset;
 
+	devfd = open(devname, O_RDONLY);
+	
 	if (devfd < 0) {
 		fprintf(stderr, "unable to open %s\n", devname);
 		goto fail;
 	}
 
-	// info = open_ctree_fs_info(harddevname, 0, 0, OPEN_CTREE_WRITES);
-	root = open_ctree_fd(devfd, harddevname, 0, OPEN_CTREE_WRITES);
-	// fsroot = root->fs_info->fs_root;
+	root = open_ctree_fd(devfd, harddevname, 0, 
+		OPEN_CTREE_PARTIAL);
 	btrfs_init_path(&path);
 	root_dir = btrfs_root_dirid(&root->fs_info->fs_root->root_item);
-	
-
-
-	// char *buf = malloc(1048576);
-	// memset(buf, 'z', 1048576);
-	// write(fd, buf, 1048576);
-	// fsync(fd);
-	// close(fd);
 
 	if (root != NULL) {
-		fprintf(stdout, "fs ID is %u, last alloc inode %llu\n", root->fs_info->fsid[0], 
-			root->fs_info->fs_root->last_inode_alloc);
+		fprintf(stdout, "fs ID is %u\n", root->fs_info->fsid[0]);
 	}
 	dir = btrfs_lookup_dir_item(NULL, root, &path,
-		root_dir, hardfilename, strlen(hardfilename), 0);
+		root_dir, filename, strlen(filename), 0);
 	
 	if (dir == NULL || IS_ERR(dir)) {
-		fprintf(stderr, "unable to find file %s\n", hardfilename);
+		fprintf(stderr, "unable to find file %s\n", filename);
 		goto fail;
 	}
 
@@ -122,55 +102,8 @@ static int do_file_blocks(const char *devname, const char *filename,
 	fprintf(stdout, "old generation is %llu\n", btrfs_inode_generation(leaf, inode));
 	btrfs_release_path(&path);
 	key.objectid = objectid;
-	key.offset = 0;
-	btrfs_set_key_type(&key, BTRFS_EXTENT_DATA_KEY);
-	ret = btrfs_search_slot(NULL, root, &key, &path, 0, 0);
 
-	if (ret != 0) {
-		fprintf(stderr, "unable to find first file extent\n");
-		btrfs_release_path(&path);
-	}
-
-	leaf = path.nodes[0];
-	btrfs_item_key_to_cpu(leaf, &key, path.slots[0]);
-	fi = btrfs_item_ptr(leaf, path.slots[0],
-			    struct btrfs_file_extent_item);
-	offset = btrfs_file_extent_disk_bytenr(leaf, fi);
-	fprintf(stdout, "first extent offset %llu\n", offset);
-
-	// return ret;
-
-	trans = btrfs_start_transaction(root, 1);
-	if (!trans) {
-		return -ENOMEM;
-	}
-	btrfs_set_inode_generation(leaf, inode, 7);
-	fprintf(stdout, "new generation is %llu\n", btrfs_inode_generation(leaf, inode));
-	fprintf(stdout, "objectid is %llu\n", key.objectid);
-	ret = btrfs_insert_file_extent(trans, root, objectid, size, offset+1048576,
-						1048576, 1048576);
-	btrfs_set_inode_nbytes(leaf, inode, total_bytes + 1048576);
-	btrfs_set_inode_size(leaf, inode, size + 1048576);
-	total_bytes = btrfs_inode_nbytes(leaf, inode);
-	size = btrfs_inode_size(leaf, inode);
-	fprintf(stdout, "new total size %llu, size is %llu\n", total_bytes, size);
-	// btrfs_insert_inode(trans, root, key.objectid, inode);
-	btrfs_mark_buffer_dirty(leaf);
-	btrfs_release_path(&path);
-	// btrfs_free_path(&path);
-	ret = btrfs_commit_transaction(trans, root);
-	if (ret) {
-		fprintf(stderr, "btrfs_commit_transaction returned %d\n", ret);
-	}
-	ret = close_ctree(root);
-	BUG_ON(ret);
-
-	close(devfd);
-	
 	return ret;
-
-fail:
-	return -1;
 }
 
 static void print_usage(void)
