@@ -98,8 +98,6 @@ int btrfs_record_composed_file_extent(struct btrfs_trans_handle *trans,
 	nbytes = btrfs_inode_nbytes(leaf, inode) + num_bytes;
 	btrfs_set_inode_nbytes(leaf, inode, nbytes);
 
-	fprintf(stdout, "after btrfs_set_stack_inode_nbytes\n");
-
 	btrfs_release_path(&path);
 
 	ins_key.objectid = disk_bytenr;
@@ -136,6 +134,7 @@ int btrfs_record_composed_file_extent(struct btrfs_trans_handle *trans,
 	if (ret)
 		goto fail;
 	ret = 0;
+
 fail:
 	btrfs_release_path(&path);
 	return ret;
@@ -211,6 +210,9 @@ static int do_compose(const char *devname, const char *filename,
 	fprintf(stdout, "objectid is %llu\n", key.objectid);
 	ret = btrfs_record_composed_file_extent(trans, root, objectid, inode, total_bytes,
 						16777216, 4096);
+	if (ret) {
+		fprintf(stderr, "btrfs_record_composed_file_extent returned %d\n", ret);
+	}
 	// btrfs_set_inode_nbytes(leaf, inode, total_bytes + 1048576);
 	// btrfs_set_inode_size(leaf, inode, size + 1048576);
 	total_bytes = btrfs_inode_nbytes(leaf, inode);
