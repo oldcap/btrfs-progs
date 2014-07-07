@@ -210,7 +210,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	argc = argc - optind;
-	if (argc != 2) {
+	if (argc != 3) {
 		print_usage();
 		return 1;
 	}
