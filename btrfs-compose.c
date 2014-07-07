@@ -157,7 +157,7 @@ static int do_compose(const char *devname, const char *filename,
 	struct btrfs_trans_handle *trans;
 	struct btrfs_key key;
 
-	devfd = open(devname, O_RDWR | O_SYNC)
+	devfd = open(devname, O_RDWR | O_SYNC);
 	if (devfd < 0) {
 		fprintf(stderr, "unable to open %s\n", devname);
 		goto fail;
