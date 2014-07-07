@@ -50,6 +50,7 @@ static int do_file_blocks(const char *devname, const char *filename)
 	int devfd;
 	struct btrfs_root *root;
 	struct btrfs_path path;
+	struct btrfs_dir_item *dir;
 	u64 root_dir, total_bytes, size, objectid;;
 	struct extent_buffer *leaf;
 	struct btrfs_key key;
@@ -63,7 +64,7 @@ static int do_file_blocks(const char *devname, const char *filename)
 		goto fail;
 	}
 
-	root = open_ctree_fd(devfd, harddevname, 0, 
+	root = open_ctree_fd(devfd, devname, 0, 
 		OPEN_CTREE_PARTIAL);
 	btrfs_init_path(&path);
 	root_dir = btrfs_root_dirid(&root->fs_info->fs_root->root_item);
@@ -104,6 +105,9 @@ static int do_file_blocks(const char *devname, const char *filename)
 	key.objectid = objectid;
 
 	return ret;
+
+fail:
+	return -1;
 }
 
 static void print_usage(void)
