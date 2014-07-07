@@ -47,14 +47,11 @@ static int do_compose(const char *devname, const char *filename,
 {
 	
 	fprintf(stdout, "Creating file %s\n", filename);
-	char *harddevname = "/dev/sdd";
-	// char *hardfilename = "vm-image";
-	char *hardfilename = "composed-file";
 
 	// int fd = open(filename, O_CREAT, O_SYNC);
 
 	struct btrfs_inode_item *inode;
-	int devfd = open(harddevname, O_RDWR);
+	int devfd = open(devname, O_RDWR);
 	int ret = 0;
 	struct btrfs_path path;
 	struct btrfs_dir_item *dir;
@@ -73,29 +70,21 @@ static int do_compose(const char *devname, const char *filename,
 		goto fail;
 	}
 
-	// info = open_ctree_fs_info(harddevname, 0, 0, OPEN_CTREE_WRITES);
-	root = open_ctree_fd(devfd, harddevname, 0, OPEN_CTREE_WRITES);
+	// info = open_ctree_fs_info(devname, 0, 0, OPEN_CTREE_WRITES);
+	root = open_ctree_fd(devfd, devname, 0, OPEN_CTREE_WRITES);
 	// fsroot = root->fs_info->fs_root;
 	btrfs_init_path(&path);
 	root_dir = btrfs_root_dirid(&root->fs_info->fs_root->root_item);
-	
-
-
-	// char *buf = malloc(1048576);
-	// memset(buf, 'z', 1048576);
-	// write(fd, buf, 1048576);
-	// fsync(fd);
-	// close(fd);
 
 	if (root != NULL) {
 		fprintf(stdout, "fs ID is %u, last alloc inode %llu\n", root->fs_info->fsid[0], 
 			root->fs_info->fs_root->last_inode_alloc);
 	}
 	dir = btrfs_lookup_dir_item(NULL, root, &path,
-		root_dir, hardfilename, strlen(hardfilename), 0);
+		root_dir, filename, strlen(filename), 0);
 	
 	if (dir == NULL || IS_ERR(dir)) {
-		fprintf(stderr, "unable to find file %s\n", hardfilename);
+		fprintf(stderr, "unable to find file %s\n", filename);
 		goto fail;
 	}
 
@@ -147,7 +136,7 @@ static int do_compose(const char *devname, const char *filename,
 	btrfs_set_inode_generation(leaf, inode, 7);
 	fprintf(stdout, "new generation is %llu\n", btrfs_inode_generation(leaf, inode));
 	fprintf(stdout, "objectid is %llu\n", key.objectid);
-	ret = btrfs_insert_file_extent(trans, root, objectid, size, offset+1048576,
+	ret = btrfs_insert_file_extent(trans, root, objectid, size, offset+size,
 						1048576, 1048576);
 	btrfs_set_inode_nbytes(leaf, inode, total_bytes + 1048576);
 	btrfs_set_inode_size(leaf, inode, size + 1048576);
@@ -175,7 +164,7 @@ static int do_compose(const char *devname, const char *filename,
 	// inode = btrfs_item_ptr(leaf, path.slots[0], struct btrfs_inode_item);
 
 	// if (inode == NULL) {
-	// 	fprintf(stderr, "unable to obtain inode for %s\n", hardfilename);
+	// 	fprintf(stderr, "unable to obtain inode for %s\n", filename);
 	// 	goto fail;
 	// }
 	// fprintf(stdout, "%llu\n", inode->generation);
@@ -203,6 +192,7 @@ int main(int argc, char *argv[])
 	int datacsum = 1;
 	char *file;
 	char *device;
+	char *mount_dir;
 	while(1) {
 		int c = getopt(argc, argv, "dinr");
 		if (c < 0)
@@ -226,9 +216,10 @@ int main(int argc, char *argv[])
 	}
 
 	device = argv[optind];
+	mount_dir = argv[optind+1]
 	file = argv[optind+1];
 
-	ret = check_mounted(device);
+	ret = check_mounted(mount_dir);
 	if (ret < 0) {
 		fprintf(stderr, "Could not check mount status: %s\n",
 			strerror(-ret));
