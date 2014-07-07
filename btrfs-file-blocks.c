@@ -104,6 +104,22 @@ static int do_file_blocks(const char *devname, const char *filename)
 	btrfs_release_path(&path);
 	key.objectid = objectid;
 
+	key.offset = 0;
+	btrfs_set_key_type(&key, BTRFS_EXTENT_DATA_KEY);
+	ret = btrfs_search_slot(NULL, root, &key, &path, 0, 0);
+
+	if (ret != 0) {
+		fprintf(stderr, "unable to find first file extent\n");
+		btrfs_release_path(&path);
+	}
+
+	leaf = path.nodes[0];
+	btrfs_item_key_to_cpu(leaf, &key, path.slots[0]);
+	fi = btrfs_item_ptr(leaf, path.slots[0],
+			    struct btrfs_file_extent_item);
+	offset = btrfs_file_extent_disk_bytenr(leaf, fi);
+	fprintf(stdout, "first extent offset %llu\n", offset);
+
 	return ret;
 
 fail:
