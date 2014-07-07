@@ -143,7 +143,6 @@ static int do_file_blocks(const char *devname, const char *filename)
 		fprintf(stdout, "extent file offset %llu, disk address %llu, size %llu\n", 
 			file_offset, disk_addr, extent_size);
 
-next_extent:
 		file_offset += btrfs_file_extent_num_bytes(leaf, fi);
 		path.slots[0]++;
 	}
