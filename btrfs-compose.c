@@ -147,16 +147,12 @@ static int do_compose(const char *devname, const char *filename,
 	
 	fprintf(stdout, "Creating file %s\n", filename);
 
-	// int fd = open(filename, O_CREAT, O_SYNC);
-
 	struct btrfs_inode_item *inode;
 	int devfd = open(devname, O_RDWR);
 	int ret = 0;
 	struct btrfs_path path;
 	struct btrfs_dir_item *dir;
-	// struct btrfs_fs_info *info;
-	struct btrfs_root *root;
-	// struct btrfs_root *fsroot;
+	struct btrfs_root *root;	
 	u64 root_dir, total_bytes, size, objectid;
 	struct extent_buffer *leaf;
 	struct btrfs_trans_handle *trans;
@@ -168,10 +164,9 @@ static int do_compose(const char *devname, const char *filename,
 		fprintf(stderr, "unable to open %s\n", devname);
 		goto fail;
 	}
-
-	// info = open_ctree_fs_info(devname, 0, 0, OPEN_CTREE_WRITES);
+	
 	root = open_ctree_fd(devfd, devname, 0, OPEN_CTREE_WRITES);
-	// fsroot = root->fs_info->fs_root;
+	
 	btrfs_init_path(&path);
 	root_dir = btrfs_root_dirid(&root->fs_info->fs_root->root_item);
 
@@ -207,38 +202,17 @@ static int do_compose(const char *devname, const char *filename,
 	// total_bytes = btrfs_stack_inode_nbytes(inode);
 	size = btrfs_inode_size(leaf, inode);
 	fprintf(stdout, "old total bytes %llu, size is %llu\n", total_bytes, size);
-	fprintf(stdout, "old generation is %llu\n", btrfs_inode_generation(leaf, inode));
 	btrfs_release_path(&path);
-	key.objectid = objectid;
-	key.offset = 0;
-	btrfs_set_key_type(&key, BTRFS_EXTENT_DATA_KEY);
-	ret = btrfs_search_slot(NULL, root, &key, &path, 0, 0);
-
-	if (ret != 0) {
-		fprintf(stderr, "unable to find first file extent\n");
-		btrfs_release_path(&path);
-	}
-
-	leaf = path.nodes[0];
-	btrfs_item_key_to_cpu(leaf, &key, path.slots[0]);
-	fi = btrfs_item_ptr(leaf, path.slots[0],
-			    struct btrfs_file_extent_item);
-	offset = btrfs_file_extent_disk_bytenr(leaf, fi);
-	fprintf(stdout, "first extent offset %llu\n", offset);
-
-	// return ret;
 
 	trans = btrfs_start_transaction(root, 1);
 	if (!trans) {
 		return -ENOMEM;
 	}
-	btrfs_set_inode_generation(leaf, inode, 7);
-	fprintf(stdout, "new generation is %llu\n", btrfs_inode_generation(leaf, inode));
 	fprintf(stdout, "objectid is %llu\n", key.objectid);
 	ret = btrfs_record_composed_file_extent(trans, root, objectid, inode, total_bytes,
 						16777216, 4096);
 	// btrfs_set_inode_nbytes(leaf, inode, total_bytes + 1048576);
-	btrfs_set_inode_size(leaf, inode, size + 1048576);
+	// btrfs_set_inode_size(leaf, inode, size + 1048576);
 	total_bytes = btrfs_inode_nbytes(leaf, inode);
 	size = btrfs_inode_size(leaf, inode);
 	fprintf(stdout, "new total size %llu, size is %llu\n", total_bytes, size);
@@ -255,6 +229,20 @@ static int do_compose(const char *devname, const char *filename,
 
 	close(devfd);
 
+
+	
+	return ret;
+
+fail:
+	return -1;
+
+	
+	// int fd = open(filename, O_CREAT, O_SYNC);
+	// struct btrfs_fs_info *info;
+	// struct btrfs_root *fsroot;
+	// info = open_ctree_fs_info(devname, 0, 0, OPEN_CTREE_WRITES);
+	// fsroot = root->fs_info->fs_root;
+
 	// if (dir != NULL) {
 	// 	fprintf(stdout, "dir type is %u\n", dir->type);
 	// }
@@ -270,11 +258,6 @@ static int do_compose(const char *devname, const char *filename,
 
 
 	// ret = btrfs_insert_inode(trans, root, objectid, &btrfs_inode);
-	
-	return ret;
-
-fail:
-	return -1;
 }
 
 static void print_usage(void)
