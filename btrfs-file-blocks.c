@@ -124,7 +124,7 @@ static int do_file_blocks(const char *devname, const char *filename)
 		}
 
 		btrfs_item_key_to_cpu(leaf, &key, path.slots[0]);
-		if (key.objectid != objectid || key.offset != offset ||
+		if (key.objectid != objectid || key.offset != file_offset ||
 		    btrfs_key_type(&key) != BTRFS_EXTENT_DATA_KEY)
 			break;
 
@@ -139,9 +139,6 @@ static int do_file_blocks(const char *devname, const char *filename)
 
 		disk_addr = btrfs_file_extent_disk_bytenr(leaf, fi);
 		extent_size = btrfs_file_extent_disk_num_bytes(leaf, fi);
-		/* skip holes and direct mapped extents */
-		if (disk_addr == 0 || disk_addr == offset)
-			goto next_extent;
 
 		fprintf(stdout, "extent file offset %llu, disk address %llu, size %llu\n", 
 			file_offset, disk_addr, extent_size);
