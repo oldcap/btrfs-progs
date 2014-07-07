@@ -55,7 +55,7 @@ static int do_file_blocks(const char *devname, const char *filename)
 	struct extent_buffer *leaf;
 	struct btrfs_key key;
 	struct btrfs_file_extent_item *fi;
-	u64 offset;
+	u64 file_offset, disk_addr, extent_size;
 
 	devfd = open(devname, O_RDONLY);
 	
@@ -117,8 +117,11 @@ static int do_file_blocks(const char *devname, const char *filename)
 	btrfs_item_key_to_cpu(leaf, &key, path.slots[0]);
 	fi = btrfs_item_ptr(leaf, path.slots[0],
 			    struct btrfs_file_extent_item);
-	offset = btrfs_file_extent_disk_bytenr(leaf, fi);
-	fprintf(stdout, "first extent offset %llu\n", offset);
+	file_offset = btrfs_file_extent_offset(leaf, fi);
+	disk_addr = btrfs_file_extent_disk_bytenr(leaf, fi);
+	extent_size = btrfs_file_extent_disk_num_bytes(leaf, fi);
+	fprintf(stdout, "extent file offset %llu, disk address %llu, size %llu\n", 
+		file_offset, disk_addr, extent_size);
 
 	return ret;
 
