@@ -162,7 +162,7 @@ static int do_file_blocks(const char *devname, const char *filename)
 		}
 
 		leaf = path.nodes[0];
-		extent = btrfs_item_ptr(leaf, path.slots[0],
+		chunk = btrfs_item_ptr(leaf, path.slots[0],
 					struct btrfs_chunk);
 
 		fprintf(stdout, "extent file offset %llu, disk address %llu, size %llu, chunk \n", 
