@@ -154,7 +154,7 @@ static int do_file_blocks(const char *devname, const char *filename)
 		chunk_key.type = BTRFS_CHUNK_ITEM_KEY;
 
 		btrfs_release_path(&path);
-		ret = btrfs_search_slot(NULL, chunk_root, &key, &path, 0, 0);
+		ret = btrfs_search_slot(NULL, chunk_root, &chunk_key, &path, 0, 0);
 		if (ret != 0) {
 			fprintf(stderr, "unable to find chunk\n");
 			btrfs_release_path(&path);
