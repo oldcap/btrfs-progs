@@ -165,8 +165,23 @@ static int do_file_blocks(const char *devname, const char *filename)
 		chunk = btrfs_item_ptr(leaf, path.slots[0],
 					struct btrfs_chunk);
 
-		fprintf(stdout, "extent file offset %llu, disk address %llu, size %llu, chunk %d\n", 
-			file_offset, disk_addr, extent_size, btrfs_chunk_num_stripes(leaf, chunk));
+		int num_stripes = btrfs_chunk_num_stripes(leaf, chunk);
+		int i;
+
+		fprintf(stdout, "extent file offset %llu, disk address %llu, size %llu", 
+			file_offset, disk_addr, extent_size);
+		if (num_stripes == 1) {
+			fprintf(stdout, ", devid %llu offset %llu\n", 
+				(unsigned long long)btrfs_stripe_devid_nr(leaf, chunk, 1),
+				(unsigned long long)btrfs_stripe_offset_nr(leaf, chunk, 1));
+		} else {
+			fprintf(stdout, ":\n");
+			for (i = 0 ; i < num_stripes ; i++) {
+				fprintf(stdout, "\tstripe %d devid %llu offset %llu\n", i,
+					(unsigned long long)btrfs_stripe_devid_nr(leaf, chunk, i),
+					(unsigned long long)btrfs_stripe_offset_nr(leaf, chunk, i));
+			}
+		}
 
 		file_offset += btrfs_file_extent_num_bytes(leaf, fi);
 		path.slots[0]++;
