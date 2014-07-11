@@ -173,13 +173,15 @@ static int do_file_blocks(const char *devname, const char *filename)
 		if (num_stripes == 1) {
 			fprintf(stdout, ", devid %llu offset %llu\n", 
 				(unsigned long long)btrfs_stripe_devid_nr(leaf, chunk, 0),
-				(unsigned long long)btrfs_stripe_offset_nr(leaf, chunk, 0));
+				(unsigned long long)btrfs_stripe_offset_nr(leaf, chunk, 0) + 
+				(disk_addr - cache->key.objectid));
 		} else {
 			fprintf(stdout, ":\n");
 			for (i = 0 ; i < num_stripes ; i++) {
 				fprintf(stdout, "\tstripe %d devid %llu offset %llu\n", i,
 					(unsigned long long)btrfs_stripe_devid_nr(leaf, chunk, i),
-					(unsigned long long)btrfs_stripe_offset_nr(leaf, chunk, i));
+					(unsigned long long)btrfs_stripe_offset_nr(leaf, chunk, i) + 
+					(disk_addr - cache->key.objectid));
 			}
 		}
 
