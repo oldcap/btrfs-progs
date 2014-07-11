@@ -172,8 +172,8 @@ static int do_file_blocks(const char *devname, const char *filename)
 			file_offset, disk_addr, extent_size);
 		if (num_stripes == 1) {
 			fprintf(stdout, ", devid %llu offset %llu\n", 
-				(unsigned long long)btrfs_stripe_devid_nr(leaf, chunk, 1),
-				(unsigned long long)btrfs_stripe_offset_nr(leaf, chunk, 1));
+				(unsigned long long)btrfs_stripe_devid_nr(leaf, chunk, 0),
+				(unsigned long long)btrfs_stripe_offset_nr(leaf, chunk, 0));
 		} else {
 			fprintf(stdout, ":\n");
 			for (i = 0 ; i < num_stripes ; i++) {
