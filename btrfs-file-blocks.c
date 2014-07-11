@@ -53,7 +53,7 @@ static int do_file_blocks(const char *devname, const char *filename)
 	struct btrfs_dir_item *dir;
 	u64 root_dir, total_bytes, size, objectid;;
 	struct extent_buffer *leaf;
-	struct btrfs_key key;
+	struct btrfs_key fi_extent_key, disk_extent_key;
 	struct btrfs_file_extent_item *fi;
 	u64 file_offset, disk_addr, extent_size;
 
