@@ -47,13 +47,17 @@ static int do_file_blocks(const char *devname, const char *filename)
 	int ret = 0;
 	fprintf(stdout, "Checking blocks for file %s\n", filename);
 	struct btrfs_inode_item *inode;
+	struct btrfs_chunk_item *chunk;
 	int devfd;
 	struct btrfs_root *root;
+	struct btrfs_fs_info *info;
+	struct btrfs_root *chunk_root;
 	struct btrfs_path path;
 	struct btrfs_dir_item *dir;
 	u64 root_dir, total_bytes, size, objectid;;
 	struct extent_buffer *leaf;
-	struct btrfs_key fi_extent_key, disk_extent_key;
+	struct btrfs_key key, chunk_key;
+	struct btrfs_block_group_cache *cache;
 	struct btrfs_file_extent_item *fi;
 	u64 file_offset, disk_addr, extent_size;
 
@@ -66,6 +70,9 @@ static int do_file_blocks(const char *devname, const char *filename)
 
 	root = open_ctree_fd(devfd, devname, 0, 
 		OPEN_CTREE_PARTIAL);
+	info = root->fs_info;
+	chunk_root = info->chunk_root;
+
 	btrfs_init_path(&path);
 	root_dir = btrfs_root_dirid(&root->fs_info->fs_root->root_item);
 
@@ -140,7 +147,25 @@ static int do_file_blocks(const char *devname, const char *filename)
 		disk_addr = btrfs_file_extent_disk_bytenr(leaf, fi);
 		extent_size = btrfs_file_extent_disk_num_bytes(leaf, fi);
 
-		fprintf(stdout, "extent file offset %llu, disk address %llu, size %llu\n", 
+		cache = btrfs_lookup_block_group(root->fs_info, disk_addr);
+		BUG_ON(!cache);
+		chunk_key.objectid = BTRFS_FIRST_CHUNK_TREE_OBJECTID;
+		chunk_key.offset = cache->key.objectid;
+		chunk_key.type = BTRFS_CHUNK_ITEM_KEY;
+
+		btrfs_release_path(&path);
+		ret = btrfs_search_slot(NULL, chunk_root, &key, &path, 0, 0);
+		if (ret != 0) {
+			fprintf(stderr, "unable to find chunk\n");
+			btrfs_release_path(&path);
+			goto fail;
+		}
+
+		leaf = path.nodes[0];
+		extent = btrfs_item_ptr(leaf, path.slots[0],
+					struct btrfs_chunk_item);
+
+		fprintf(stdout, "extent file offset %llu, disk address %llu, size %llu, chunk \n", 
 			file_offset, disk_addr, extent_size);
 
 		file_offset += btrfs_file_extent_num_bytes(leaf, fi);
