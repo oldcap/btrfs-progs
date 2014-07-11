@@ -47,7 +47,7 @@ static int do_file_blocks(const char *devname, const char *filename)
 	int ret = 0;
 	fprintf(stdout, "Checking blocks for file %s\n", filename);
 	struct btrfs_inode_item *inode;
-	struct btrfs_chunk_item *chunk;
+	struct btrfs_chunk *chunk;
 	int devfd;
 	struct btrfs_root *root;
 	struct btrfs_fs_info *info;
@@ -163,7 +163,7 @@ static int do_file_blocks(const char *devname, const char *filename)
 
 		leaf = path.nodes[0];
 		extent = btrfs_item_ptr(leaf, path.slots[0],
-					struct btrfs_chunk_item);
+					struct btrfs_chunk);
 
 		fprintf(stdout, "extent file offset %llu, disk address %llu, size %llu, chunk \n", 
 			file_offset, disk_addr, extent_size);
