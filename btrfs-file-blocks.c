@@ -171,8 +171,10 @@ static int do_file_blocks(const char *devname, const char *filename)
 		int last_stripe_in_offset = (int)(offset_in_chunk / BTRFS_STRIPE_LEN) % num_stripes;
 		unsigned long long offset_in_stripe;
 
-		fprintf(stdout, "extent file offset %llu, disk address %llu, size %llu, offset in chunk %llu", 
-			file_offset, disk_addr, extent_size, offset_in_chunk);
+		fprintf(stdout, "extent file offset %llu, disk address %llu, size %llu, 
+			offset in chunk %llu, last stripe is %d\n", 
+			file_offset, disk_addr, extent_size, offset_in_chunk,
+			last_stripe_in_offset);
 
 		if (num_stripes == 1) {
 			fprintf(stdout, ", devid %llu offset %llu\n", 
