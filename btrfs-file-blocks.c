@@ -186,13 +186,13 @@ static int do_file_blocks(const char *devname, const char *filename)
 			for (i = 0 ; i < num_stripes ; i++) {
 				if (i < last_stripe_in_offset) {
 					offset_in_stripe = (int)(offset_in_chunk / (BTRFS_STRIPE_LEN * num_stripes)) 
-						* BTRFS_STRIPE_LEN;
+						* BTRFS_STRIPE_LEN + BTRFS_STRIPE_LEN;
 				} else if (i == last_stripe_in_offset) {
 					offset_in_stripe = (int)(offset_in_chunk / (BTRFS_STRIPE_LEN * num_stripes)) 
 						* BTRFS_STRIPE_LEN + (offset_in_chunk % BTRFS_STRIPE_LEN);
 				} else {
 					offset_in_stripe = (int)(offset_in_chunk / (BTRFS_STRIPE_LEN * num_stripes)) 
-						* BTRFS_STRIPE_LEN + BTRFS_STRIPE_LEN;;
+						* BTRFS_STRIPE_LEN;
 				}
 
 				fprintf(stdout, "\tstripe %d devid %llu chunk offset %llu offset %llu\n", i,
