@@ -171,7 +171,8 @@ static int do_file_blocks(const char *devname, const char *filename)
 		int last_stripe_in_offset = (int)(offset_in_chunk / BTRFS_STRIPE_LEN) % num_stripes;
 		unsigned long long offset_in_stripe;
 
-		fprintf(stdout, "extent file offset %llu, disk address %llu, size %llu, offset in chunk %llu, last stripe is %d\n", 
+		fprintf(stdout, "extent file offset %llu, disk address %llu, size %llu, "
+			"offset in chunk %llu, last stripe is %d", 
 			file_offset, disk_addr, extent_size, offset_in_chunk,
 			last_stripe_in_offset);
 
@@ -194,8 +195,9 @@ static int do_file_blocks(const char *devname, const char *filename)
 						* BTRFS_STRIPE_LEN + BTRFS_STRIPE_LEN;;
 				}
 
-				fprintf(stdout, "\tstripe %d devid %llu offset %llu\n", i,
+				fprintf(stdout, "\tstripe %d devid %llu chunk offset %llu offset %llu\n", i,
 					(unsigned long long)btrfs_stripe_devid_nr(leaf, chunk, i),
+					(unsigned long long)btrfs_stripe_offset_nr(leaf, chunk, i),
 					(unsigned long long)btrfs_stripe_offset_nr(leaf, chunk, i) + 
 					offset_in_stripe);
 			}
