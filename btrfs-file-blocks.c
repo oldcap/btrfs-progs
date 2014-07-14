@@ -167,20 +167,32 @@ static int do_file_blocks(const char *devname, const char *filename)
 
 		int num_stripes = btrfs_chunk_num_stripes(leaf, chunk);
 		int i;
-		unsigned long long offset_in_stripe = 
-			(disk_addr - chunk_key.offset) % (num_stripes * BTRFS_STRIPE_LEN);
-			// BTRFS_STRIPE_LEN
+		unsigned long long offset_in_chunk = disk_addr - cache->key.objectid;
+		int last_stripe_in_offset = (int)(offset_in_chunk / BTRFS_STRIPE_LEN) % num_stripes;
+		unsigned long long offset_in_stripe;
 
-		fprintf(stdout, "extent file offset %llu, disk address %llu, size %llu", 
-			file_offset, disk_addr, extent_size);
+		fprintf(stdout, "extent file offset %llu, disk address %llu, size %llu, offset in chunk %llu", 
+			file_offset, disk_addr, extent_size, offset_in_chunk);
+
 		if (num_stripes == 1) {
 			fprintf(stdout, ", devid %llu offset %llu\n", 
 				(unsigned long long)btrfs_stripe_devid_nr(leaf, chunk, 0),
 				(unsigned long long)btrfs_stripe_offset_nr(leaf, chunk, 0) + 
-				offset_in_stripe);
+				offset_in_chunk);
 		} else {
 			fprintf(stdout, ":\n");
 			for (i = 0 ; i < num_stripes ; i++) {
+				if (i < last_stripe_in_offset) {
+					offset_in_stripe = (int)(offset_in_chunk / (BTRFS_STRIPE_LEN * num_stripes)) 
+						* BTRFS_STRIPE_LEN;
+				} else if (i == last_stripe_in_offset) {
+					offset_in_stripe = (int)(offset_in_chunk / (BTRFS_STRIPE_LEN * num_stripes)) 
+						* BTRFS_STRIPE_LEN + (offset_in_chunk % BTRFS_STRIPE_LEN);
+				} else {
+					offset_in_stripe = (int)(offset_in_chunk / (BTRFS_STRIPE_LEN * num_stripes)) 
+						* BTRFS_STRIPE_LEN + BTRFS_STRIPE_LEN;;
+				}
+
 				fprintf(stdout, "\tstripe %d devid %llu offset %llu\n", i,
 					(unsigned long long)btrfs_stripe_devid_nr(leaf, chunk, i),
 					(unsigned long long)btrfs_stripe_offset_nr(leaf, chunk, i) + 
