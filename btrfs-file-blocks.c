@@ -106,8 +106,8 @@ static int do_file_blocks(const char *devname, const char *filename)
 	total_bytes = btrfs_inode_nbytes(leaf, inode);
 	// total_bytes = btrfs_stack_inode_nbytes(inode);
 	size = btrfs_inode_size(leaf, inode);
-	fprintf(stdout, "old total bytes %llu, size is %llu\n", total_bytes, size);
-	fprintf(stdout, "old generation is %llu\n", btrfs_inode_generation(leaf, inode));
+	fprintf(stdout, "total bytes %llu, size is %llu\n", total_bytes, size);
+	fprintf(stdout, "generation is %llu\n", btrfs_inode_generation(leaf, inode));
 	btrfs_release_path(&path);
 	key.objectid = objectid;
 
@@ -235,7 +235,7 @@ int main(int argc, char *argv[])
 	ret = do_file_blocks(device, file);
 
 	if (ret) {
-		fprintf(stderr, "compose returned %d\n", ret);
+		fprintf(stderr, "file blocks returned %d\n", ret);
 	}
 	return ret;
 }
