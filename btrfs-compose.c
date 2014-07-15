@@ -265,7 +265,7 @@ fail:
 
 static void print_usage(void)
 {
-	printf("usage: btrfs-compose [-d] [-i] device file\n");
+	printf("usage: btrfs-compose [-d] [-i] device mount_dir file [target device] [target offset]\n");
 	printf("\t-d disable data checksum\n");
 	printf("\t-i ignore xattrs and ACLs\n");
 }
@@ -278,6 +278,9 @@ int main(int argc, char *argv[])
 	char *file;
 	char *device;
 	char *mount_dir;
+	char *tgt_dev;
+	unsigned long long tgt_extent_start;
+	
 	while(1) {
 		int c = getopt(argc, argv, "dinr");
 		if (c < 0)
