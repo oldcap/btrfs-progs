@@ -54,7 +54,7 @@ static int do_file_blocks(const char *devname, const char *filename)
 	struct btrfs_root *chunk_root;
 	struct btrfs_path path;
 	struct btrfs_dir_item *dir;
-	u64 root_dir, total_bytes, size, objectid;;
+	u64 root_dir, total_bytes, size, objectid, rootid;
 	struct extent_buffer *leaf;
 	struct btrfs_key key, chunk_key;
 	struct btrfs_block_group_cache *cache;
@@ -79,6 +79,11 @@ static int do_file_blocks(const char *devname, const char *filename)
 	if (root != NULL) {
 		fprintf(stdout, "fs ID is %u\n", root->fs_info->fsid[0]);
 	}
+
+	int fd = open(filename, O_RDONLY);
+	lookup_ino_rootid(fd, &rootid);
+	fprintf(stdout, "found rootid %llu\n", rootid);
+
 	dir = btrfs_lookup_dir_item(NULL, root, &path,
 		root_dir, filename, strlen(filename), 0);
 	
