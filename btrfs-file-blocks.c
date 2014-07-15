@@ -82,7 +82,9 @@ static int do_file_blocks(const char *devname, const char *filename)
 		fprintf(stdout, "fs ID is %u\n", root->fs_info->fsid[0]);
 	}
 
-	dir_name = strtok(filename,"/");
+	char dup_filename[128];
+	strcpy(dup_filename, filename);
+	dir_name = strtok(dup_filename,"/");
 	dir_name = strtok (NULL, "/");
 
 	while (dir_name != NULL) {
