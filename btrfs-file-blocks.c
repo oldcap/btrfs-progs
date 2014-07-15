@@ -61,6 +61,7 @@ static int do_file_blocks(const char *devname, const char *filename)
 	struct btrfs_file_extent_item *fi;
 	u64 file_offset, disk_addr, extent_size;
 	char *dir_name;
+	int dir_cnt = 0;
 
 	devfd = open(devname, O_RDONLY);
 	
@@ -89,26 +90,25 @@ static int do_file_blocks(const char *devname, const char *filename)
 	// fprintf(stdout, "found rootid %llu\n", rootid);
 
 	dir_name = strtok(filename,"/");
+	dir_name = strtok (NULL, "/");
 
 	while (dir_name != NULL) {
-		printf ("%s\n",dir_name);
-		dir_name = strtok (NULL, "/");
-	}
+		dir = btrfs_lookup_dir_item(NULL, root, &path,
+			root_dir, dir_name, strlen(dir_name), 0);
+		if (dir == NULL || IS_ERR(dir)) {
+			fprintf(stderr, "unable to find path %s\n", dir_name);
+			goto fail;
+		}
+		leaf = path.nodes[0];
+		btrfs_dir_item_key_to_cpu(leaf, dir, &key);
+		btrfs_release_path(&path);
+		objectid = key.objectid;
+		fprintf(stdout, "found path %s dir key %llu\n", 
+			dir_name, key.objectid);
 
-	dir = btrfs_lookup_dir_item(NULL, root, &path,
-		// root_dir, filename, strlen(filename), 0);
-		258, filename, strlen(filename), 0);
-	
-	if (dir == NULL || IS_ERR(dir)) {
-		fprintf(stderr, "unable to find file %s\n", filename);
-		goto fail;
+		root_dir = key.objectid;
+		dir_name = strtok (NULL, "/");	
 	}
-
-	leaf = path.nodes[0];
-	btrfs_dir_item_key_to_cpu(leaf, dir, &key);
-	btrfs_release_path(&path);
-	objectid = key.objectid;
-	fprintf(stdout, "found dir key %llu\n", key.objectid);
 
 	ret = btrfs_lookup_inode(NULL, root, &path, &key, 0);
 	fprintf(stdout, "found inode key %llu\n", key.objectid);
