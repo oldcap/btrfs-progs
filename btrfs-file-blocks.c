@@ -80,7 +80,10 @@ static int do_file_blocks(const char *devname, const char *filename)
 		fprintf(stdout, "fs ID is %u\n", root->fs_info->fsid[0]);
 	}
 
-	int fd = open(filename, O_RDONLY);
+	char real_file_name[128];
+	strcat(real_file_name, "/hdfs/");
+	strcat(real_file_name, filename);
+	int fd = open(real_file_name, O_RDONLY);
 	lookup_ino_rootid(fd, &rootid);
 	fprintf(stdout, "found rootid %llu\n", rootid);
 
