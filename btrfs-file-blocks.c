@@ -80,15 +80,16 @@ static int do_file_blocks(const char *devname, const char *filename)
 		fprintf(stdout, "fs ID is %u\n", root->fs_info->fsid[0]);
 	}
 
-	char real_file_name[128];
-	strcat(real_file_name, "/hdfs/");
-	strcat(real_file_name, filename);
-	int fd = open(real_file_name, O_RDONLY);
-	lookup_ino_rootid(fd, &rootid);
-	fprintf(stdout, "found rootid %llu\n", rootid);
+	// char real_file_name[128];
+	// strcat(real_file_name, "/hdfs/");
+	// strcat(real_file_name, filename);
+	// int fd = open(real_file_name, O_RDONLY);
+	// lookup_ino_rootid(fd, &rootid);
+	// fprintf(stdout, "found rootid %llu\n", rootid);
 
 	dir = btrfs_lookup_dir_item(NULL, root, &path,
-		root_dir, filename, strlen(filename), 0);
+		// root_dir, filename, strlen(filename), 0);
+		258, filename, strlen(filename), 0);
 	
 	if (dir == NULL || IS_ERR(dir)) {
 		fprintf(stderr, "unable to find file %s\n", filename);
