@@ -60,6 +60,7 @@ static int do_file_blocks(const char *devname, const char *filename)
 	struct btrfs_block_group_cache *cache;
 	struct btrfs_file_extent_item *fi;
 	u64 file_offset, disk_addr, extent_size;
+	char *dir_name;
 
 	devfd = open(devname, O_RDONLY);
 	
@@ -86,6 +87,13 @@ static int do_file_blocks(const char *devname, const char *filename)
 	// int fd = open(real_file_name, O_RDONLY);
 	// lookup_ino_rootid(fd, &rootid);
 	// fprintf(stdout, "found rootid %llu\n", rootid);
+
+	dir_name = strtok(filename,"/");
+
+	while (dir_name != NULL) {
+		printf ("%s\n",dir_name);
+		dir_name = strtok (NULL, "/");
+	}
 
 	dir = btrfs_lookup_dir_item(NULL, root, &path,
 		// root_dir, filename, strlen(filename), 0);
