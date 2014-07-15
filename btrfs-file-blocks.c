@@ -54,14 +54,13 @@ static int do_file_blocks(const char *devname, const char *filename)
 	struct btrfs_root *chunk_root;
 	struct btrfs_path path;
 	struct btrfs_dir_item *dir;
-	u64 root_dir, total_bytes, size, objectid, rootid;
+	u64 root_dir, total_bytes, size, objectid;
 	struct extent_buffer *leaf;
 	struct btrfs_key key, chunk_key;
 	struct btrfs_block_group_cache *cache;
 	struct btrfs_file_extent_item *fi;
 	u64 file_offset, disk_addr, extent_size;
 	char *dir_name;
-	int dir_cnt = 0;
 
 	devfd = open(devname, O_RDONLY);
 	
@@ -77,17 +76,11 @@ static int do_file_blocks(const char *devname, const char *filename)
 
 	btrfs_init_path(&path);
 	root_dir = btrfs_root_dirid(&root->fs_info->fs_root->root_item);
+	objectid = root_dir;
 
 	if (root != NULL) {
 		fprintf(stdout, "fs ID is %u\n", root->fs_info->fsid[0]);
 	}
-
-	// char real_file_name[128];
-	// strcat(real_file_name, "/hdfs/");
-	// strcat(real_file_name, filename);
-	// int fd = open(real_file_name, O_RDONLY);
-	// lookup_ino_rootid(fd, &rootid);
-	// fprintf(stdout, "found rootid %llu\n", rootid);
 
 	dir_name = strtok(filename,"/");
 	dir_name = strtok (NULL, "/");
