@@ -213,7 +213,7 @@ static int do_compose(const char *devname, const char *filename,
 	}
 	fprintf(stdout, "objectid is %llu\n", key.objectid);
 	ret = btrfs_record_composed_file_extent(trans, root, objectid, inode, total_bytes,
-						16777216, 4096);
+						tgtoffset, 4096);
 	if (ret) {
 		fprintf(stderr, "btrfs_record_composed_file_extent returned %d\n", ret);
 	}
