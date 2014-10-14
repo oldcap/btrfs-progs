@@ -309,7 +309,7 @@ int main(int argc, char *argv[])
 	mount_dir = argv[optind+1];
 	file_name = argv[optind+2];
 
-	ret = check_mounted(mount_dir);
+	ret = check_mounted(device);
 	if (ret < 0) {
 		fprintf(stderr, "Could not check mount status: %s\n",
 			strerror(-ret));
