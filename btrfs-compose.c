@@ -150,7 +150,7 @@ static int do_compose(const char *devname, const char *filename,
 	int datacsum, int noxattr)
 {
 	
-	fprintf(stdout, "Creating file %s\n", filename);
+	fprintf(stdout, "Composing file %s\n", filename);
 
 	struct btrfs_inode_item *inode;
 	int devfd;

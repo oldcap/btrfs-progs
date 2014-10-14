@@ -31,6 +31,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <uuid/uuid.h>
+#include <errno.h>
 
 #include "ctree.h"
 #include "disk-io.h"
@@ -109,7 +110,7 @@ static int do_file_blocks(const char *devname, const char *filename)
 	fprintf(stdout, "found inode key %llu\n", key.objectid);
 
 	if (ret) {
-		fprintf(stderr, "unable to find inode item\n");
+		perror("unable to find inode item\n");
 		goto fail;
 	}
 
