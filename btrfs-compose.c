@@ -308,7 +308,7 @@ int main(int argc, char *argv[])
 	device = argv[optind];
 	mount_dir = argv[optind+1];
 	file_name = argv[optind+2];
-	if (argc > 3) {}
+	if (argc > 3) {
 		tgt_dev = argv[optind+3];
 		tgt_extent_start = atoll(argv[optind+4]);
 	}
