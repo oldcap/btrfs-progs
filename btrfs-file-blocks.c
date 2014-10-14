@@ -45,8 +45,6 @@
 
 static int do_file_blocks(const char *devname, const char *filename)
 {
-	fprintf(stdout, "Composing file %s\n", filename);
-
 	struct btrfs_inode_item *inode;
 	int devfd;
 	int ret = 0;
@@ -56,7 +54,15 @@ static int do_file_blocks(const char *devname, const char *filename)
 	u64 root_dir, total_bytes, size, objectid;
 	struct extent_buffer *leaf;
 	struct btrfs_trans_handle *trans;
-	struct btrfs_key key;
+	u64 file_offset, disk_addr, extent_size;
+	struct btrfs_chunk *chunk;
+	struct btrfs_fs_info *info;
+	struct btrfs_root *chunk_root;
+	struct btrfs_key key, chunk_key;
+	struct btrfs_block_group_cache *cache;
+	struct btrfs_file_extent_item *fi;
+
+	fprintf(stdout, "Checking blocks for file %s\n", filename);
 
 	devfd = open(devname, O_RDWR | O_SYNC);
 	if (devfd < 0) {
