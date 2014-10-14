@@ -300,7 +300,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	argc = argc - optind;
-	if (argc != 3) {
+	if (argc < 3) {
 		print_usage();
 		return 1;
 	}
@@ -308,6 +308,10 @@ int main(int argc, char *argv[])
 	device = argv[optind];
 	mount_dir = argv[optind+1];
 	file_name = argv[optind+2];
+	if (argc > 3) {}
+		tgt_dev = argv[optind+3];
+		tgt_extent_start = atoll(argv[optind+4]);
+	}
 	full_path = (char *)malloc(strlen(mount_dir) + strlen(file_name));
 	strcpy(full_path, mount_dir);
 	strcat(full_path, file_name);
@@ -338,7 +342,6 @@ int main(int argc, char *argv[])
 	}
 
 	ret = do_compose(device, file_name, datacsum, noxattr);
-	mount(device, mount_dir, "btrfs", MS_NOATIME, NULL);
 
 	if (ret) {
 		fprintf(stderr, "compose returned %d\n", ret);
@@ -348,5 +351,6 @@ int main(int argc, char *argv[])
 failed:
 	free(full_path);
 	close(fd);
+	mount(device, mount_dir, "btrfs", MS_NOATIME, NULL);
 	return ret;
 }
