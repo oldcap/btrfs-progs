@@ -315,7 +315,7 @@ int main(int argc, char *argv[])
 		return 1;
 	} else if (ret) {
 		fprintf(stdout, "%s is mounted\n", device);
-		int fd = open(filename, O_CREAT, O_SYNC);
+		int fd = open(file, O_CREAT, O_SYNC);
 		close(fd);
 		if (umount(device)) {
 			fprintf(stderr, "%s cannot be unmounted\n", device);
