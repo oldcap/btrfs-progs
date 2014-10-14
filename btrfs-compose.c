@@ -145,7 +145,8 @@ fail:
 }
 
 static int do_compose(const char *devname, const char *filename, 
-	const char *tgtdevice, const unsigned long long tgtoffset, 
+	const char *tgtdevice, const unsigned long long tgtoffset,
+	const unsigned long long num_bytes,
 	int datacsum, int noxattr)
 {
 	
@@ -213,7 +214,7 @@ static int do_compose(const char *devname, const char *filename,
 	}
 	fprintf(stdout, "objectid is %llu\n", key.objectid);
 	ret = btrfs_record_composed_file_extent(trans, root, objectid, inode, total_bytes,
-						tgtoffset, 4096);
+						tgtoffset, num_bytes);
 	if (ret) {
 		fprintf(stderr, "btrfs_record_composed_file_extent returned %d\n", ret);
 	}
@@ -281,8 +282,9 @@ int main(int argc, char *argv[])
 	char *file_name, *full_path;
 	char *device;
 	char *mount_dir;
-	char *tgt_dev = NULL;
+	char *tgt_dev = NULL;	
 	unsigned long long tgt_extent_start = 0;
+	unsigned long long num_bytes = 0;
 	
 	while(1) {
 		int c = getopt(argc, argv, "dinr");
@@ -312,6 +314,7 @@ int main(int argc, char *argv[])
 	if (argc > 3) {
 		tgt_dev = argv[optind+3];
 		tgt_extent_start = atoll(argv[optind+4]);
+		num_bytes = atoll(argv[optind+5]);
 	}
 	full_path = (char *)malloc(strlen(mount_dir) + strlen(file_name));
 	strcpy(full_path, mount_dir);
@@ -342,7 +345,8 @@ int main(int argc, char *argv[])
 		goto failed;
 	}
 
-	ret = do_compose(device, file_name, tgt_dev, tgt_extent_start, datacsum, noxattr);
+	ret = do_compose(device, file_name, tgt_dev, tgt_extent_start, 
+		num_bytes, datacsum, noxattr);
 
 	if (ret) {
 		fprintf(stderr, "compose returned %d\n", ret);
