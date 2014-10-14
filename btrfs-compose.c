@@ -318,7 +318,7 @@ int main(int argc, char *argv[])
 		fprintf(stdout, "%s is not mounted\n", device);
 		if (mount(device, mount_dir, "btrfs", MS_NOATIME, NULL)) {
 			fprintf(stderr, "%s cannot be mounted\n", device);
-			perror("%s cannot be mounted", device);
+			perror("Device cannot be mounted");
 			goto failed;
 		}
 	} 
