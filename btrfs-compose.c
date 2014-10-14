@@ -28,6 +28,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/acl.h>
+#include <sys/mount.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <uuid/uuid.h>
@@ -313,11 +314,17 @@ int main(int argc, char *argv[])
 			strerror(-ret));
 		return 1;
 	} else if (ret) {
-		fprintf(stderr, "%s is mounted\n", device);
+		fprintf(stdout, "%s is mounted\n", device);
+		int fd = open(filename, O_CREAT, O_SYNC);
+		close(fd);
+		if (umount(device)) {
+			fprintf(stderr, "%s cannot be unmounted\n", device);
+		}
 		return 1;
 	}
 
 	ret = do_compose(device, file, datacsum, noxattr);
+	mount(device, mount_dir, "btrfs", MS_NOATIME, NULL);
 
 	if (ret) {
 		fprintf(stderr, "compose returned %d\n", ret);
