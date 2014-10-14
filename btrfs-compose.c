@@ -277,7 +277,7 @@ int main(int argc, char *argv[])
 	int ret, fd;
 	int noxattr = 0;
 	int datacsum = 1;
-	char *file_name;
+	char *file_name, *full_path;
 	char *device;
 	char *mount_dir;
 	char *tgt_dev;
@@ -308,6 +308,10 @@ int main(int argc, char *argv[])
 	device = argv[optind];
 	mount_dir = argv[optind+1];
 	file_name = argv[optind+2];
+	full_path = (char *)malloc(strlen(mount_dir) + strlen(file_name));
+	strcpy(full_path, mount_dir);
+	strcat(full_path, file_name);
+	fprintf(stdout, "%s\n", full_path);
 
 	ret = check_mounted(device);
 	if (ret < 0) {
@@ -330,7 +334,7 @@ int main(int argc, char *argv[])
 	}
 	close(fd);
 	if (umount(device)) {
-		fprintf(stderr, "%s cannot be unmounted\n", device);
+		perror("Device cannot be unmounted");
 		goto failed;
 	}
 
@@ -343,6 +347,7 @@ int main(int argc, char *argv[])
 	}
 	
 failed:
+	free(full_path);
 	close(fd);
 	return ret;
 }
