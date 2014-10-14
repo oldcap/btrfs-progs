@@ -145,6 +145,7 @@ fail:
 }
 
 static int do_compose(const char *devname, const char *filename, 
+	const char *tgtdevice, const unsigned long long tgtoffset, 
 	int datacsum, int noxattr)
 {
 	
@@ -280,8 +281,8 @@ int main(int argc, char *argv[])
 	char *file_name, *full_path;
 	char *device;
 	char *mount_dir;
-	char *tgt_dev;
-	unsigned long long tgt_extent_start;
+	char *tgt_dev = NULL;
+	unsigned long long tgt_extent_start = 0;
 	
 	while(1) {
 		int c = getopt(argc, argv, "dinr");
@@ -341,7 +342,7 @@ int main(int argc, char *argv[])
 		goto failed;
 	}
 
-	ret = do_compose(device, file_name, datacsum, noxattr);
+	ret = do_compose(device, file_name, tgt_dev, tgt_extent_start, datacsum, noxattr);
 
 	if (ret) {
 		fprintf(stderr, "compose returned %d\n", ret);
