@@ -101,14 +101,6 @@ static int do_file_blocks(const char *devname, const char *filename)
 		goto fail;
 	}
 
-	leaf = path.nodes[0];
-	inode = btrfs_item_ptr(leaf, path.slots[0], struct btrfs_inode_item);
-	total_bytes = btrfs_inode_nbytes(leaf, inode);
-		// total_bytes = btrfs_stack_inode_nbytes(inode);
-	size = btrfs_inode_size(leaf, inode);
-	fprintf(stdout, "total bytes %llu, size is %llu\n", total_bytes, size);
-	// btrfs_release_path(&path);
-
 	fprintf(stdout, "objectid is %llu\n", key.objectid);
 	leaf = path.nodes[0];
 	inode = btrfs_item_ptr(leaf, path.slots[0], struct btrfs_inode_item);
@@ -116,7 +108,6 @@ static int do_file_blocks(const char *devname, const char *filename)
 		// total_bytes = btrfs_stack_inode_nbytes(inode);
 	size = btrfs_inode_size(leaf, inode);
 	fprintf(stdout, "total bytes %llu, size is %llu\n", total_bytes, size);
-	fprintf(stdout, "generation is %llu\n", btrfs_inode_generation(leaf, inode));
 	btrfs_release_path(&path);
 	key.objectid = objectid;
 
