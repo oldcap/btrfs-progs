@@ -311,7 +311,6 @@ int main(int argc, char *argv[])
 	full_path = (char *)malloc(strlen(mount_dir) + strlen(file_name));
 	strcpy(full_path, mount_dir);
 	strcat(full_path, file_name);
-	fprintf(stdout, "%s\n", full_path);
 
 	ret = check_mounted(device);
 	if (ret < 0) {
@@ -327,13 +326,13 @@ int main(int argc, char *argv[])
 		}
 	} 
 
-	fd = open(file_name, O_CREAT, O_SYNC);
+	fd = open(full_path, O_CREAT, O_SYNC);
 	if (fd < 0) {
 		fprintf(stderr, "File %s cannot be created\n", file_name);
 		goto failed;
 	}
 	close(fd);
-	if (umount(device)) {
+	if (umount(mount_dir)) {
 		perror("Device cannot be unmounted");
 		goto failed;
 	}
