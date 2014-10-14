@@ -273,10 +273,10 @@ static void print_usage(void)
 
 int main(int argc, char *argv[])
 {
-	int ret;
+	int ret, fd;
 	int noxattr = 0;
 	int datacsum = 1;
-	char *file;
+	char *file_name;
 	char *device;
 	char *mount_dir;
 	char *tgt_dev;
@@ -306,29 +306,41 @@ int main(int argc, char *argv[])
 
 	device = argv[optind];
 	mount_dir = argv[optind+1];
-	file = argv[optind+2];
+	file_name = argv[optind+2];
 
 	ret = check_mounted(mount_dir);
 	if (ret < 0) {
 		fprintf(stderr, "Could not check mount status: %s\n",
 			strerror(-ret));
-		return 1;
-	} else if (ret) {
-		fprintf(stdout, "%s is mounted\n", device);
-		int fd = open(file, O_CREAT, O_SYNC);
-		close(fd);
-		if (umount(device)) {
-			fprintf(stderr, "%s cannot be unmounted\n", device);
+		goto failed;
+	} else if (ret == 0) {
+		fprintf(stdout, "%s is not mounted\n", device);
+		if (mount(device, mount_dir, "btrfs", MS_NOATIME, NULL)) {
+			fprintf(stderr, "%s cannot be mounted\n", device);
+			goto failed;
 		}
-		return 1;
+	} 
+
+	fd = open(file_name, O_CREAT, O_SYNC);
+	if (fd < 0) {
+		fprintf(stderr, "File %s cannot be created\n", file_name);
+		goto failed;
+	}
+	close(fd);
+	if (umount(device)) {
+		fprintf(stderr, "%s cannot be unmounted\n", device);
+		goto failed;
 	}
 
-	ret = do_compose(device, file, datacsum, noxattr);
+	ret = do_compose(device, file_name, datacsum, noxattr);
 	mount(device, mount_dir, "btrfs", MS_NOATIME, NULL);
 
 	if (ret) {
 		fprintf(stderr, "compose returned %d\n", ret);
-		return 1;
+		goto failed;
 	}
-	return 0;
+	
+failed:
+	close(fd);
+	return ret;
 }
