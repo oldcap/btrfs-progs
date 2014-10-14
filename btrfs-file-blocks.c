@@ -109,7 +109,7 @@ static int do_file_blocks(const char *devname, const char *filename)
 	ret = btrfs_lookup_inode(NULL, root, &path, &key, 0);
 	fprintf(stdout, "found inode key %llu\n", key.objectid);
 
-	if (ret) {
+	if (ret < 0) {
 		perror("unable to find inode item\n");
 		goto fail;
 	}
