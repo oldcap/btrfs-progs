@@ -32,6 +32,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <uuid/uuid.h>
+ #include <errno.h>
 
 #include "ctree.h"
 #include "disk-io.h"
@@ -317,6 +318,7 @@ int main(int argc, char *argv[])
 		fprintf(stdout, "%s is not mounted\n", device);
 		if (mount(device, mount_dir, "btrfs", MS_NOATIME, NULL)) {
 			fprintf(stderr, "%s cannot be mounted\n", device);
+			perror("%s cannot be mounted", device);
 			goto failed;
 		}
 	} 
