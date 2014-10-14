@@ -122,6 +122,7 @@ static int do_file_blocks(const char *devname, const char *filename)
 	}
 
 	for (file_offset = 0; file_offset < total_bytes; ) {
+		fprintf(stdout, "file_offset=%d\n", file_offset);
 		leaf = path.nodes[0];
 		if (path.slots[0] >= btrfs_header_nritems(leaf)) {
 			ret = btrfs_next_leaf(root, &path);
