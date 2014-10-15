@@ -147,9 +147,9 @@ static int do_file_blocks(const char *devname, const char *filename)
 		if (btrfs_file_extent_compression(leaf, fi) ||
 			btrfs_file_extent_encryption(leaf, fi) ||
 			btrfs_file_extent_other_encoding(leaf, fi)) {
-			fprintf(stderr, "btrfs_file_extent_compression\n");
 			break;
 		}
+		fprintf(stdout, "haha\n");
 
 		disk_addr = btrfs_file_extent_disk_bytenr(leaf, fi);
 		extent_size = btrfs_file_extent_disk_num_bytes(leaf, fi);
