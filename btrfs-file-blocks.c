@@ -135,14 +135,16 @@ static int do_file_blocks(const char *devname, const char *filename)
 		btrfs_item_key_to_cpu(leaf, &key, path.slots[0]);
 		if (key.objectid != objectid || key.offset != file_offset ||
 			btrfs_key_type(&key) != BTRFS_EXTENT_DATA_KEY) {
-			fprintf(stderr, "key.objectid != objectid\n");
 			break;
 		}
 
 		fi = btrfs_item_ptr(leaf, path.slots[0],
 			struct btrfs_file_extent_item);
-		if (btrfs_file_extent_type(leaf, fi) != BTRFS_FILE_EXTENT_REG)
+		if (btrfs_file_extent_type(leaf, fi) != BTRFS_FILE_EXTENT_REG) {
+			fprintf(stderr, "btrfs_file_extent_type\n");
 			break;
+		}
+		fprintf(stdout, "haha\n");
 		if (btrfs_file_extent_compression(leaf, fi) ||
 			btrfs_file_extent_encryption(leaf, fi) ||
 			btrfs_file_extent_other_encoding(leaf, fi))
