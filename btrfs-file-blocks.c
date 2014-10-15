@@ -69,8 +69,11 @@ static int do_file_blocks(const char *devname, const char *filename)
 		fprintf(stderr, "unable to open %s\n", devname);
 		goto fail;
 	}
-
-	root = open_ctree_fd(devfd, devname, 0, OPEN_CTREE_WRITES);
+	
+	root = open_ctree_fd(devfd, devname, 0, 
+		OPEN_CTREE_PARTIAL);
+	info = root->fs_info;
+	chunk_root = info->chunk_root;
 
 	btrfs_init_path(&path);
 	root_dir = btrfs_root_dirid(&root->fs_info->fs_root->root_item);
@@ -163,7 +166,6 @@ static int do_file_blocks(const char *devname, const char *filename)
 		btrfs_release_path(&path);
 		ret = btrfs_search_slot(NULL, chunk_root, &chunk_key, &path, 0, 0);
 		if (ret != 0) {
-			fprintf(stdout, "unable to find chunk\n");
 			fprintf(stderr, "unable to find chunk\n");
 			btrfs_release_path(&path);
 			goto fail;
