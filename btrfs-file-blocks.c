@@ -151,8 +151,8 @@ static int do_file_blocks(const char *devname, const char *filename)
 		}
 
 		disk_addr = btrfs_file_extent_disk_bytenr(leaf, fi);
-		fprintf(stdout, "%llu\n", disk_addr);
 		extent_size = btrfs_file_extent_disk_num_bytes(leaf, fi);
+		fprintf(stdout, "disk_addr=%llu, extent_size=%llu\n", disk_addr, extent_size);
 
 		cache = btrfs_lookup_block_group(root->fs_info, disk_addr);
 		BUG_ON(!cache);
