@@ -205,6 +205,7 @@ static int do_file_blocks(const char *devname, const char *filename)
 		}
 
 		file_offset += btrfs_file_extent_num_bytes(leaf, fi);
+		fprintf(stdout, "file_offset=%d\n", file_offset);
 		path.slots[0]++;
 	}
 
