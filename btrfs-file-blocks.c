@@ -126,8 +126,10 @@ static int do_file_blocks(const char *devname, const char *filename)
 		leaf = path.nodes[0];
 		if (path.slots[0] >= btrfs_header_nritems(leaf)) {
 			ret = btrfs_next_leaf(root, &path);
-			if (ret != 0)
+			if (ret != 0) {
+				fprintf(stderr, "btrfs_next_leaf\n", );
 				break;	
+			}
 			continue;
 		}
 
@@ -156,7 +158,6 @@ static int do_file_blocks(const char *devname, const char *filename)
 
 		btrfs_release_path(&path);
 		ret = btrfs_search_slot(NULL, chunk_root, &chunk_key, &path, 0, 0);
-		fprintf(stdout, "found chunk %d\n", chunk_key.offset);
 		if (ret != 0) {
 			fprintf(stderr, "unable to find chunk\n");
 			btrfs_release_path(&path);
