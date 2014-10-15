@@ -127,7 +127,7 @@ static int do_file_blocks(const char *devname, const char *filename)
 		if (path.slots[0] >= btrfs_header_nritems(leaf)) {
 			ret = btrfs_next_leaf(root, &path);
 			if (ret != 0) {
-				fprintf(stderr, "btrfs_next_leaf\n", );
+				fprintf(stderr, "btrfs_next_leaf\n");
 				break;	
 			}
 			continue;
