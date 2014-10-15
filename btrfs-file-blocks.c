@@ -127,7 +127,6 @@ static int do_file_blocks(const char *devname, const char *filename)
 		if (path.slots[0] >= btrfs_header_nritems(leaf)) {
 			ret = btrfs_next_leaf(root, &path);
 			if (ret != 0) {
-				fprintf(stderr, "btrfs_next_leaf\n");
 				break;	
 			}
 			continue;
@@ -135,8 +134,10 @@ static int do_file_blocks(const char *devname, const char *filename)
 
 		btrfs_item_key_to_cpu(leaf, &key, path.slots[0]);
 		if (key.objectid != objectid || key.offset != file_offset ||
-			btrfs_key_type(&key) != BTRFS_EXTENT_DATA_KEY)
+			btrfs_key_type(&key) != BTRFS_EXTENT_DATA_KEY) {
+			fprintf(stderr, "key.objectid != objectid\n");
 			break;
+		}
 
 		fi = btrfs_item_ptr(leaf, path.slots[0],
 			struct btrfs_file_extent_item);
