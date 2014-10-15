@@ -167,6 +167,7 @@ static int do_file_blocks(const char *devname, const char *filename)
 			btrfs_release_path(&path);
 			goto fail;
 		}
+		fprintf(stdout, "chunk_key=%llu\n", chunk_key.offset);
 
 		leaf = path.nodes[0];
 		chunk = btrfs_item_ptr(leaf, path.slots[0],
